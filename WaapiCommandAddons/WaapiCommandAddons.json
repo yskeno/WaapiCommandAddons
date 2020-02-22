@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "id": "ak.wca.remote_connect_to_localhost",
+      "displayName": "Connect to Localhost",
+      "defaultShortcut": "H",
+      "program": "C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/WaapiCommandAddons.exe",
+      "startMode": "SingleSelectionSingleProcess",
+      "args": "-c",
+      "mainMenu": {
+        "basePath": "WAAPI"
+      }
+    },
+    {
+      "id": "ak.wca.remote_disconnect_from_localhost",
+      "displayName": "Disconnect from Localhost",
+      "defaultShortcut": "Alt+H",
+      "program": "C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/WaapiCommandAddons.exe",
+      "startMode": "SingleSelectionSingleProcess",
+      "args": "-d",
+      "mainMenu": {
+        "basePath": "WAAPI"
+      }
+    },
+    {
+      "id": "ak.wca.reaper_recall_project",
+      "displayName": "Edit in Reaper",
+      "defaultShortcut": "Ctrl+R",
+      "program": "C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/WaapiCommandAddons.exe",
+      "startMode": "MultipleSelectionSingleProcessSpaceSeparated",
+      "args": "-a \"C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/reaper_open_project.bat\" -t reaprojpath",
+      "contextMenu": {
+        "visibleFor": "Sound"
+      }
+    }
+  ]
+}

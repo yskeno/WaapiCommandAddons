@@ -3,7 +3,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 class WwiseMA
@@ -34,7 +33,7 @@ General Options:
 
         static void Main(string[] args)
         {
-            if ((args.Length == 0)|| args.Contains<string>("-h") || args.Contains<string>("--help"))
+            if ((args.Length == 0) || args.Contains<string>("-h") || args.Contains<string>("--help"))
             {
                 usage();
             }
