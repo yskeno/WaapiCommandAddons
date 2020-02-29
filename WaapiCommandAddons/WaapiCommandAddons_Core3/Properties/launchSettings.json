@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Wwise-MultiFunctional-AddonsCS": {
+      "commandName": "Project",
+      "commandLineArgs": "-h"
+    }
+  }
+}

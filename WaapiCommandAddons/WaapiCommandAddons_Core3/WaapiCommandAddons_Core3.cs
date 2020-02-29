@@ -117,7 +117,7 @@ General Options:
                     return;
                 }
 
-/*                // Execute external application with Wwise info as argument
+                // Execute external application with Wwise info as argument
                 if (args.Contains<string>("-x") || args.Contains<string>("--exe"))
                 {
                     var executeCommand = new ProcessStartInfo();
@@ -142,11 +142,9 @@ General Options:
                     else
                     {
                         Console.WriteLine("ERROR: No argument for -x(--exe) found!");
-                        return;
                     }
 
-                    // array range method for C#8.0 or later.
-                    //executeCommand.FileName = String.Join(" ", args[2..]);
+                    executeCommand.FileName = String.Join(" ", args[2..]);
 
                     if (executeCommand.FileName == null)
                     {
@@ -156,7 +154,7 @@ General Options:
 
                     Process.Start(executeCommand);
                     return;
-                }*/
+                }
             }
 
             catch (Exception e)

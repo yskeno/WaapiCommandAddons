@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>WaapiCommandAddonsCS</RootNamespace>
+    <Authors>Yusuke Enomoto</Authors>
+    <Company>yskeno</Company>
+    <Version>0.1.0</Version>
+    <Description>Wwise Command Addons using WAAPI</Description>
+    <Copyright>Yusuke Enomoto</Copyright>
+    <PackageLicenseExpression>Apache License</PackageLicenseExpression>
+    <RepositoryType>GitHub</RepositoryType>
+    <RepositoryUrl>https://github.com/yskeno/WaapiCommandAddons.git</RepositoryUrl>
+    <PackageTags>Audiokinetic Wwise WAAPI</PackageTags>
+    <PackageReleaseNotes />
+    <SignAssembly>true</SignAssembly>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon />
+    <StartupObject />
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile>yskeno_wca.pfx</AssemblyOriginatorKeyFile>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <DefineConstants />
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="WaapiCommandAddons.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(WWISESDK)\samples\WwiseAuthoringAPI\cs\WaapiClientCore\WaapiClientCore.csproj" />
+    <ProjectReference Include="$(WWISESDK)\samples\WwiseAuthoringAPI\cs\WaapiClientJson\WaapiClientJson.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
+  <Target Name="CustomActionsAfterPublish" AfterTargets="BundlePublishDirectory" Condition="Exists('$(WWISEROOT)\Authoring\Data\Add-ons\Commands\')">
+   <ItemGroup>
+     <SourceItems Include="$(TargetDir)..\publish\$(TargetName).exe" />
+     <SourceItems Include="$(SolutionDir)WaapiCommandAddons.json" />
+   </ItemGroup>
+    <Copy SourceFiles="@(SourceItems)" DestinationFolder="$(WWISEROOT)\Authoring\Data\Add-ons\Commands\" />
+  </Target>
+</Project>
+

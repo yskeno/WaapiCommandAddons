@@ -12,44 +12,32 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaapiClientJson", "%WWISESD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaapiBridgeCS", "WaapiBridgeCS\WaapiBridgeCS.csproj", "{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaapiCommandAddons", "WaapiCommandAddons\WaapiCommandAddons.csproj", "{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaapiCommandAddons", "WaapiCommandAddons\WaapiCommandAddons.csproj", "{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00} = {BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}
+		{102D363C-7CB8-A300-85C9-26F5F1D3FF00} = {102D363C-7CB8-A300-85C9-26F5F1D3FF00}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
-		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Debug|x64.ActiveCfg = Debug|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Debug|x64.Build.0 = Debug|x64
-		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Release|Any CPU.ActiveCfg = Release|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Release|x64.ActiveCfg = Release|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Release|x64.Build.0 = Release|x64
-		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Debug|x64.ActiveCfg = Debug|x64
 		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Debug|x64.Build.0 = Debug|x64
-		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Release|Any CPU.ActiveCfg = Release|x64
 		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Release|x64.ActiveCfg = Release|x64
 		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Release|x64.Build.0 = Release|x64
-		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Debug|x64.ActiveCfg = Debug|x64
-		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Debug|x64.Build.0 = Debug|x64
-		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Release|x64.ActiveCfg = Release|x64
-		{C01A9DE8-D27F-4113-A9F2-B3CE28A3B78A}.Release|x64.Build.0 = Release|x64
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Debug|x64.ActiveCfg = Debug|x64
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Debug|x64.Build.0 = Debug|x64
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Release|x64.ActiveCfg = Release|x64
-		{C33AE6A1-AB82-482B-B47B-F26224C5FAD7}.Release|x64.Build.0 = Release|x64
+		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Debug|x64.ActiveCfg = Debug|x64
+		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Debug|x64.Build.0 = Debug|x64
+		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Release|x64.ActiveCfg = Release|x64
+		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Wwise-MultiFunctional-AddonsCS": {
-      "commandName": "Project",
-      "commandLineArgs": "-x -pn C:\\Program Files (x86)\\Audiokinetic\\Wwise 2019.2.0.7216\\Authoring\\Data\\Add-ons\\Commands\\showArgs.bat"
-    }
-  }
-}
