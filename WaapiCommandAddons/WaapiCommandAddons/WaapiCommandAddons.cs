@@ -5,9 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-class WwiseMA
-{
-}
 
 namespace AK.Wwise.Waapi
 {
@@ -117,46 +114,46 @@ General Options:
                     return;
                 }
 
-/*                // Execute external application with Wwise info as argument
-                if (args.Contains<string>("-x") || args.Contains<string>("--exe"))
-                {
-                    var executeCommand = new ProcessStartInfo();
-                    executeCommand.UseShellExecute = true;
+                /*                // Execute external application with Wwise info as argument
+                                if (args.Contains<string>("-x") || args.Contains<string>("--exe"))
+                                {
+                                    var executeCommand = new ProcessStartInfo();
+                                    executeCommand.UseShellExecute = true;
 
-                    if (args.Contains<string>("-pn"))
-                    {
-                        JObject waapiArg_getProjectName = new JObject(
-                                                               new JProperty("from",
-                                                                  new JObject(new JProperty("ofType",
-                                                                      new JArray(new JValue("Project"))))));
-                        JObject waapOpt_getProjectName = new JObject(
-                                                               new JProperty("return",
-                                                                    new JArray(new JValue("name"))));
+                                    if (args.Contains<string>("-pn"))
+                                    {
+                                        JObject waapiArg_getProjectName = new JObject(
+                                                                               new JProperty("from",
+                                                                                  new JObject(new JProperty("ofType",
+                                                                                      new JArray(new JValue("Project"))))));
+                                        JObject waapOpt_getProjectName = new JObject(
+                                                                               new JProperty("return",
+                                                                                    new JArray(new JValue("name"))));
 
-                        var projectInfo = await client.Call(ak.wwise.core.@object.get, waapiArg_getProjectName, waapOpt_getProjectName);
+                                        var projectInfo = await client.Call(ak.wwise.core.@object.get, waapiArg_getProjectName, waapOpt_getProjectName);
 
-                        executeCommand.Arguments = (string)projectInfo["return"][0]["name"];
+                                        executeCommand.Arguments = (string)projectInfo["return"][0]["name"];
 
-                        //Console.WriteLine("projectName: {0}", exeArg);
-                    }
-                    else
-                    {
-                        Console.WriteLine("ERROR: No argument for -x(--exe) found!");
-                        return;
-                    }
+                                        //Console.WriteLine("projectName: {0}", exeArg);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("ERROR: No argument for -x(--exe) found!");
+                                        return;
+                                    }
 
-                    // array range method for C#8.0 or later.
-                    //executeCommand.FileName = String.Join(" ", args[2..]);
+                                    // array range method for C#8.0 or later.
+                                    //executeCommand.FileName = String.Join(" ", args[2..]);
 
-                    if (executeCommand.FileName == null)
-                    {
-                        Console.WriteLine("Not found application to execute!");
-                        return;
-                    }
+                                    if (executeCommand.FileName == null)
+                                    {
+                                        Console.WriteLine("Not found application to execute!");
+                                        return;
+                                    }
 
-                    Process.Start(executeCommand);
-                    return;
-                }*/
+                                    Process.Start(executeCommand);
+                                    return;
+                                }*/
             }
 
             catch (Exception e)

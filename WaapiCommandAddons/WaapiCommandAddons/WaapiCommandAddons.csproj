@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>WaapiCommandAddons</RootNamespace>
     <AssemblyName>WaapiCommandAddons</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -86,12 +86,6 @@
     <Compile Include="WaapiCommandAddons.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -116,32 +110,25 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+    del /s /q "$(TargetDir)ILMerge\*.*"
+    mkdir "$(TargetDir)ILMerge "
+
+   "$(ILMergeConsolePath)" /ndebug /wildcards /out:"$(TargetDir)ILMerge\$(TargetFileName)" "$(TargetPath)" "$(TargetDir)*.dll"
+
+    xcopy /y /d /i  "$(SolutionDir)WaapiCommandAddons.json" "$(WWISEROOT)\Authoring\Data\Add-ons\Commands\"
+    xcopy /y /d /i  "$(TargetDir)ILMerge\$(TargetFileName)" "$(WWISEROOT)\Authoring\Data\Add-ons\Commands\"
+)</PostBuildEvent>
+  </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\ILMerge.3.0.29\build\ILMerge.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.3.0.29\build\ILMerge.props'))" />
   </Target>
-  <Target Name="CustomActionsAfterILMerge" AfterTargets="ILMerge" Condition="Exists('$(WWISEROOT)\Authoring\Data\Add-ons\Commands\')">
-    <ItemGroup>
-      <SourceItems Include="$(TargetDir)..\publish\$(TargetName).exe" />
-      <SourceItems Include="$(SolutionDir)WaapiCommandAddons.json" />
-    </ItemGroup>
-    <Copy SourceFiles="@(SourceItems)" DestinationFolder="$(WWISEROOT)\Authoring\Data\Add-ons\Commands\" />
-  </Target>
-  <ItemGroup>
-    <PackageReference Include="ILMerge" Version="3.0.29" />
-  </ItemGroup>
-  <Target Name="ILMerge">
-    <!-- the ILMergePath property points to the location of ILMerge.exe console application -->
-    <Exec Command="$(ILMergeConsolePath) /wildcards $(TargetPath) /out:$(TargetDir)ILMerge\$(TargetFileName) $(TargetDir)*.dll " />
-  </Target>
-  <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release (
-    del /s /q "$(TargetDir)ILMerge\*.*"
-    mkdir "$(TargetDir)ILMerge "
-    "$(ILMergeConsolePath)" /ndebug /wildcards /out:"$(TargetDir)ILMerge\$(TargetFileName)" "$(TargetPath)" "$(TargetDir)*.dll"
-)</PostBuildEvent>
-  </PropertyGroup>
 </Project>
