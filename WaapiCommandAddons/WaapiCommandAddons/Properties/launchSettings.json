@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WaapiCommandAddons": {
+      "commandName": "Project",
+      "commandLineArgs": "-c RandomContainer"
+    }
+  }
+}

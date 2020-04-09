@@ -4,9 +4,12 @@
       "id": "ak.wca.remote_connect_to_localhost",
       "displayName": "Connect to Localhost",
       "defaultShortcut": "H",
-      "program": "C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/WaapiCommandAddons.exe",
+      "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
       "startMode": "SingleSelectionSingleProcess",
-      "args": "-c",
+      "args": [
+        "--remote",
+        "--connect"
+      ],
       "mainMenu": {
         "basePath": "WAAPI"
       }
@@ -15,23 +18,38 @@
       "id": "ak.wca.remote_disconnect_from_localhost",
       "displayName": "Disconnect from Localhost",
       "defaultShortcut": "Alt+H",
-      "program": "C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/WaapiCommandAddons.exe",
+      "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
       "startMode": "SingleSelectionSingleProcess",
-      "args": "-d",
+      "args": [
+        "--remote",
+        "--disconnect"
+      ],
       "mainMenu": {
         "basePath": "WAAPI"
+      }
+    },
+    {
+      "id": "ak.wca.execute_exttest",
+      "displayName": "Execute Test Cmd",
+      "defaultShortcut": "",
+      "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
+      "startMode": "SingleSelectionSingleProcess",
+      "args": [
+        "--execute",
+        "${WwiseInstallAddons}\\show_cmd_args.bat",
+        "--projname"
+      ],
+      "mainMenu": {
+        "basePath": "TEST"
       }
     },
     {
       "id": "ak.wca.reaper_recall_project",
       "displayName": "Edit in Reaper",
       "defaultShortcut": "Ctrl+R",
-      "program": "C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/WaapiCommandAddons.exe",
+      "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
       "startMode": "MultipleSelectionSingleProcessSpaceSeparated",
-      "args": "-a \"C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/reaper_open_project.bat\" -t reaprojpath",
-      "contextMenu": {
-        "visibleFor": "Sound"
-      }
+      "args": "-a \"C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/reaper_open_project.bat\" -t reaprojpath"
     }
   ]
 }

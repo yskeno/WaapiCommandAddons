@@ -5,35 +5,45 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaapiClientCore", "%WWISESDK%\samples\WwiseAuthoringAPI\cs\WaapiClientCore\WaapiClientCore.csproj", "{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaapiClientJson", "%WWISESDK%\samples\WwiseAuthoringAPI\cs\WaapiClientJson\WaapiClientJson.csproj", "{102D363C-7CB8-A300-85C9-26F5F1D3FF00}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00} = {BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D2E41569-4180-4807-BAE7-5143D7DE81CE}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaapiCommandAddons", "WaapiCommandAddons\WaapiCommandAddons.csproj", "{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00} = {BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}
-		{102D363C-7CB8-A300-85C9-26F5F1D3FF00} = {102D363C-7CB8-A300-85C9-26F5F1D3FF00}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTestProject", "XUnitTestProject\XUnitTestProject.csproj", "{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaapiCommandAddons", "WaapiCommandAddons\WaapiCommandAddons.csproj", "{1A4A57C0-49DD-4079-8C2B-87C433A73648}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Debug|x64.ActiveCfg = Debug|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Debug|x64.Build.0 = Debug|x64
+		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Release|Any CPU.ActiveCfg = Release|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Release|x64.ActiveCfg = Release|x64
 		{BF45323C-2BD1-9F00-34E2-22F5A0ECFB00}.Release|x64.Build.0 = Release|x64
-		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Debug|x64.ActiveCfg = Debug|x64
-		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Debug|x64.Build.0 = Debug|x64
-		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Release|x64.ActiveCfg = Release|x64
-		{102D363C-7CB8-A300-85C9-26F5F1D3FF00}.Release|x64.Build.0 = Release|x64
-		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Debug|x64.ActiveCfg = Debug|x64
-		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Debug|x64.Build.0 = Debug|x64
-		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Release|x64.ActiveCfg = Release|x64
-		{FE282BD7-08F7-4762-A6C9-54BB0FD77DE6}.Release|x64.Build.0 = Release|x64
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Debug|x64.Build.0 = Debug|Any CPU
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Release|x64.ActiveCfg = Release|Any CPU
+		{5D5DDFC5-F07E-4AAA-8F4F-1DA6898A344D}.Release|x64.Build.0 = Release|Any CPU
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Debug|x64.ActiveCfg = Debug|x64
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Debug|x64.Build.0 = Debug|x64
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Release|x64.ActiveCfg = Release|x64
+		{1A4A57C0-49DD-4079-8C2B-87C433A73648}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

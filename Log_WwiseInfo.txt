@@ -1,0 +1,88 @@
+	Time	ID	Message	Parameters
+Error	22:48:09	WampInvokeError	WAMP CALL error 'ak.wwise.invalid_arguments' invoking 'ak.wwise.core.object.create': 'Argument @OutputBus={"id":"{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}","name":"Master Audio Bus"} does not match requirements.'	Args:
+{
+    "parent": "{23266613-0C12-4CC3-BCBE-08487868B936}",
+    "name": "New Switch Container",
+    "notes": "",
+    "type": "RandomSequenceContainer",
+    "@OutputBus": {
+        "id": "{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}",
+        "name": "Master Audio Bus"
+    },
+    "@Volume": 0.0,
+    "@UserAuxSendVolume2": 0.0,
+    "@ReflectionsVolume": 0.0,
+    "@UserAuxSend1": {
+        "id": "{00000000-0000-0000-0000-000000000000}"
+    },
+    "@UserAuxSendVolume0": 0.0,
+    "@MidiTransposition": 0,
+    "@UserAuxSendHPF0": 0,
+    "@HdrActiveRange": 12.0,
+    "@MidiVelocityOffset": 0,
+    "@IsGlobalLimit": 0,
+    "@UserAuxSendHPF1": 0,
+    "@UserAuxSendVolume1": 0.0,
+    "@CenterPercentage": 0,
+    "@UserAuxSendHPF3": 0,
+    "@UserAuxSendLPF1": 0,
+    "@UserAuxSend3": {
+        "id": "{00000000-0000-0000-0000-000000000000}"
+    },
+    "@MaxReachedBehavior": 0,
+    "@UserAuxSendLPF3": 0,
+    "@UserAuxSendHPF2": 0,
+    "@UserAuxSendLPF0": 0,
+    "@UserAuxSend2": {
+        "id": "{00000000-0000-0000-0000-000000000000}"
+    },
+    "@ReflectionsAuxSend": {
+        "id": "{00000000-0000-0000-0000-000000000000}"
+    },
+    "@MidiBreakOnNoteOff": false,
+    "@UserAuxSendVolume3": 0.0,
+    "@OverridePriority": false,
+    "@Attenuation": {
+        "id": "{00000000-0000-0000-0000-000000000000}"
+    },
+    "@HdrEnableEnvelope": false,
+    "@EnableDiffraction": false,
+    "@3DPosition": 0,
+    "@Weight": 50.0,
+    "@OverLimitBehavior": 0,
+    "@MidiPlayOnNoteType": 1,
+    "@3DSpatialization": 0,
+    "@Priority": 50,
+    "@EnableAttenuation": true,
+    "@RenderEffect1": false,
+    "@Conversion": {
+        "id": "{6D1B890C-9826-4384-BF07-C15223E9FB56}",
+        "name": "Default Conversion Settings"
+    },
+    "@RenderEffect2": false,
+    "@BypassEffect0": false,
+    "@OverrideAnalysis": false,
+    "@Effect1": {
+        "id": "{00000000-0000-0000-0000-000000000000}"
+    },
+    "@Effect3": {
+        "id": "{69479ACD-2C87-4007-B83E-55210A3B36B7}",
+        "name": "Dual_Filters_Radio_Comm"
+    },
+    "@RenderEffect3": false,
+    "@BypassEff...
+, Options:
+{}
+, Details:
+{
+    "argumentPointer": "/@OutputBus",
+    "schemaPointer": "",
+    "schemaDescription": "",
+    "typeUri": "ak.wwise.schema_validation_failed",
+    "argumentName": "@OutputBus",
+    "schemaExpect": "{\"^@[:_a-zA-Z0-9]+$\":{\"$ref\":\"#/definitions/propertyValue\",\"description\":\"Sets the value of property \\\\@propertyName. Refer to \\\\ref wobjects_index for property names.\"}}",
+    "schemaKeyword": "patternProperties",
+    "procedureUri": "ak.wwise.core.object.create",
+    "argumentValue": "{\"id\":\"{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}\",\"name\":\"Master Audio Bus\"}"
+}
+
