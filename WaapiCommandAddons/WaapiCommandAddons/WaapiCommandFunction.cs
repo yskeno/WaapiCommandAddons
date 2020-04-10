@@ -187,83 +187,20 @@ namespace AK.Wwise.Waapi
         {
             System.Diagnostics.Debug.WriteLine("*** ConvertContainerType() ***");
 
-             JObject TESTJobjet = new JObject { { "return",
-                                             new JArray { 
-                                                 // @ or none = そのプロパティに設定してある値を返す(Override関係なし)。
-                                                 // @@ = そのプロパティの実際の値を返す。Overrideしていなかった場合はParentの値になる。
-                                                 // General Settings
-                                                 // if you need "switchContainerChild:context", add this.
-                                                 "type", "name", "notes", "parent", 
-                                                 "@Inclusion","@Color","@Volume","@Lowpass","@Highpass","@Pitch","@InitialDelay",
-                                                 "@OverrideOutput","@OutputBus","@OutputBusVolume","@OutputBusLowpass","@OutputBusHighpass",
-                                                 "@UseGameAuxSends","@OverrideGameAuxSends","@GameAuxSendVolume","@GameAuxSendLPF","@GameAuxSendHPF",
-                                                 "@OverrideUserAuxSends",
-                                                 "@UserAuxSend0","@UserAuxSendVolume0","@UserAuxSendLPF0","@UserAuxSendHPF0",
-                                                 "@UserAuxSend1","@UserAuxSendVolume1","@UserAuxSendLPF1","@UserAuxSendHPF1",
-                                                 "@UserAuxSend2","@UserAuxSendVolume2","@UserAuxSendLPF2","@UserAuxSendHPF2",
-                                                 "@UserAuxSend3","@UserAuxSendVolume3","@UserAuxSendLPF3","@UserAuxSendHPF3",
-                                                 "@OverrideEarlyReflections","@ReflectionsAuxSend","@ReflectionsVolume",
-                                                 // Conversion
-                                                 "@OverrideConversion","@Conversion","@OverrideAnalysis","@EnableLoudnessNormalization","@MakeUpGain",
-                                                 // Effects
-                                                 "@OverrideEffect","@BypassEffect",
-                                                 "@Effect0","@RenderEffect0","@BypassEffect0","@Effect1","@RenderEffect1","@BypassEffect1",
-                                                 "@Effect2","@RenderEffect2","@BypassEffect2","@Effect3","@RenderEffect3","@BypassEffect3",
-                                                 // Positioning
-                                                 "@OverridePositioning","@CenterPercentage","@SpeakerPanning",
-                                                 "@ListenerRelativeRouting","@3DSpatialization","@SpeakerPanning3DSpatializationMix",
-                                                 "@EnableAttenuation","@Attenuation",
-                                                 "@3DPosition","@HoldListenerOrientation","@HoldEmitterPositionOrientation","@EnableDiffraction",
-                                                 // HDR
-                                                 "@OverrideHdrEnvelope","@HdrEnableEnvelope","@HdrEnvelopeSensitivity","@HdrActiveRange",
-                                                 // Mixer Plug-in
-                                                 "@OverrideAttachableMixerInput","@AttachableMixerInput",
-                                                 // MIDI
-                                                 "@OverrideMidiEventsBehavior","@MidiPlayOnNoteType","@MidiBreakOnNoteOff",
-                                                 "@OverrideMidiNoteTracking","@EnableMidiNoteTracking","@MidiTrackingRootNote",
-                                                 "@MidiTransposition","@MidiVelocityOffset",
-                                                 "@MidiKeyFilterMax","@MidiKeyFilterMin",
-                                                 "@MidiVelocityFilterMax","@MidiVelocityFilterMin",
-                                                 "@MidiChannelFilter",
-                                                 // Advansed Settings - Playback Limit
-                                                 "@IgnoreParentMaxSoundInstance","@UseMaxSoundPerInstance","@MaxSoundPerInstance","@IsGlobalLimit",
-                                                 "@OverLimitBehavior","@MaxReachedBehavior",
-                                                 // Advansed Settings - Virtual Voice
-                                                 "@OverrideVirtualVoice",
-                                                 "@BelowThresholdBehavior",
-                                                 "@VirtualVoiceQueueBehavior",
-                                                 // Advansed Settings - Playback Priority
-                                                 "@OverridePriority",
-                                                 "@Priority",
-                                                 "@PriorityDistanceFactor",
-                                                 "@PriorityDistanceOffset",
-                                                 // Common Property for Container
-                                                 "@Weight",
-                                                 // BlendContainer
-                                                 "@BlendBehavior",
-                                                 // RandomSequenceContainer
-                                                 "@GlobalOrPerObject","@RandomOrSequence",
-                                                 "@NormalOrShuffle","@RandomAvoidRepeating","@RandomAvoidRepeatingCount",
-                                                 "@RestartBeginningOrBackward",
-                                                 "@PlayMechanismStepOrContinuous","@PlayMechanismResetPlaylistEachPlay",
-                                                 "@PlayMechanismLoop","@PlayMechanismInfiniteOrNumberOfLoops","@PlayMechanismLoopCount",
-                                                 "@PlayMechanismSpecialTransitions","@PlayMechanismSpecialTransitionsType","@PlayMechanismSpecialTransitionsValue",
-                                                 // SwitchContainer
-                                                "@SwitchBehavior","@SwitchGroupOrStateGroup","@DefaultSwitchOrState"
-                 } } };
-               System.Diagnostics.Debug.WriteLine("\nTESTJobjet:\n" + TESTJobjet);
-            
-            var test = "{ \"return\": [ \"" + String.Join("\", \"", WwiseObjectsReference.GetPropertyNames()).Replace("_", "@") + "\" ] }";
-            System.Diagnostics.Debug.WriteLine("\nTEST:\n" + test);
-
-            var OptSelectedObjInfo = JObject.Parse("{ \"return\": [ \"" + String.Join("\", \"", WwiseObjectsReference.GetPropertyNames()).Replace("_", "@") + "\" ] }");
+            // Get Selected Object Info
+            var OptSelectedObjInfo = JObject.Parse("{ \"return\": [ \"" +
+                                                        (String.Join("\", \"", typeof(WwiseObjectsReference).GetProperties().Select(f => f.Name).ToArray())).Replace("\"_", "\"@") +
+                                                                    "\" ] }");
             System.Diagnostics.Debug.WriteLine("\nOptSelectedObjInfo:\n" + OptSelectedObjInfo);
 
-            var SelectedObjInfo = (JObject)(await client.Call(ak.wwise.ui.getSelectedObjects, null, OptSelectedObjInfo).ConfigureAwait(false))["objects"][0];
+            var SelectedObjInfo = (JObject)(await client.Call(ak.wwise.ui.getSelectedObjects,
+                                                              null,
+                                                              OptSelectedObjInfo).ConfigureAwait(false))["objects"][0];
             System.Diagnostics.Debug.WriteLine("\nSelectedObjInfo:\n" + SelectedObjInfo);
 
             var NestedProperties = new[] { "parent", "@OutputBus", "@UserAuxSend0", "@UserAuxSend1", "@UserAuxSend2", "@UserAuxSend3", "@ReflectionsAuxSend",
-                                           "@Conversion", "@Effect0", "@Effect1", "@Effect2", "@Effect3", "@Attenuation", "@AttachableMixerInput" };
+                                           "@Conversion", "@Effect0", "@Effect1", "@Effect2", "@Effect3", "@Attenuation", "@AttachableMixerInput",
+                                           /* "@DefaultSwitchOrState", "@SwitchGroupOrStateGroup" */};
 
             foreach (var NestedProperty in NestedProperties)
             {
@@ -272,88 +209,30 @@ namespace AK.Wwise.Waapi
 
             // Remove '@' and ignore DefaultValue items.
             // And add '@' again to use argments of object creation.
-            var ArgmentString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(SelectedObjInfo.ToString().Replace("@", "_")),
-                                                                          Formatting.Indented,
-                                                                          new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }).Replace("_", "@");
-            /*
-            var WithAtProperties = new[] {"\"Inclusion\"", "\"Color\"", "\"Volume\"", "\"Lowpass\"", "\"Highpass\"", "\"Pitch\"", "\"InitialDelay\"",
-                                          "\"OverrideOutput\"", "\"OutputBus\"", "\"OutputBusVolume\"", "\"OutputBusLowpass\"", "\"OutputBusHighpass\"",
-                                          "\"UseGameAuxSends\"", "\"OverrideGameAuxSends\"", "\"GameAuxSendVolume\"", "\"GameAuxSendLPF\"", "\"GameAuxSendHPF\"",
-                                          "\"OverrideUserAuxSends\"",
-                                          "\"UserAuxSend0\"", "\"UserAuxSendVolume0\"", "\"UserAuxSendLPF0\"", "\"UserAuxSendHPF0\"",
-                                          "\"UserAuxSend1\"", "\"UserAuxSendVolume1\"", "\"UserAuxSendLPF1\"", "\"UserAuxSendHPF1\"",
-                                          "\"UserAuxSend2\"", "\"UserAuxSendVolume2\"", "\"UserAuxSendLPF2\"", "\"UserAuxSendHPF2\"",
-                                          "\"UserAuxSend3\"", "\"UserAuxSendVolume3\"", "\"UserAuxSendLPF3\"", "\"UserAuxSendHPF3\"",
-                                          "\"OverrideEarlyReflections\"", "\"ReflectionsAuxSend\"", "\"ReflectionsVolume\"", 
-                                          // Conversion
-                                          "\"OverrideConversion\"", "\"Conversion\"", "\"OverrideAnalysis\"", "\"EnableLoudnessNormalization\"", "\"MakeUpGain\"", 
-                                          // Effects
-                                          "\"OverrideEffect\"", "\"BypassEffect\"",
-                                          "\"Effect0\"", "\"RenderEffect0\"", "\"BypassEffect0\"", "\"Effect1\"", "\"RenderEffect1\"", "\"BypassEffect1\"",
-                                          "\"Effect2\"", "\"RenderEffect2\"", "\"BypassEffect2\"", "\"Effect3\"", "\"RenderEffect3\"", "\"BypassEffect3\"", 
-                                          // Positioning
-                                          "\"OverridePositioning\"", "\"CenterPercentage\"", "\"SpeakerPanning\"",
-                                          "\"ListenerRelativeRouting\"", "\"3DSpatialization\"", "\"SpeakerPanning3DSpatializationMix\"",
-                                          "\"EnableAttenuation\"", "\"Attenuation\"",
-                                          "\"3DPosition\"", "\"HoldListenerOrientation\"", "\"HoldEmitterPositionOrientation\"", "\"EnableDiffraction\"", 
-                                          // HDR
-                                          "\"OverrideHdrEnvelope\"", "\"HdrEnableEnvelope\"", "\"HdrEnvelopeSensitivity\"", "\"HdrActiveRange\"", 
-                                          // Mixer Plug-in
-                                          "\"OverrideAttachableMixerInput\"", 
-                                          // MIDI
-                                          "\"OverrideMidiEventsBehavior\"", "\"MidiPlayOnNoteType\"", "\"MidiBreakOnNoteOff\"",
-                                          "\"OverrideMidiNoteTracking\"", "\"EnableMidiNoteTracking\"", "\"MidiTrackingRootNote\"",
-                                          "\"MidiTransposition\"", "\"MidiVelocityOffset\"", 
-                                          // Advansed Settings - Playback Limit
-                                          "\"IgnoreParentMaxSoundInstance\"", "\"UseMaxSoundPerInstance\"", "\"MaxSoundPerInstance\"", "\"IsGlobalLimit\"",
-                                          "\"OverLimitBehavior\"", "\"MaxReachedBehavior\"", 
-                                          // Advansed Settings - Virtual Voice
-                                          "\"OverrideVirtualVoice\"",
-                                          "\"BelowThresholdBehavior\"",
-                                          "\"VirtualVoiceQueueBehavior\"", 
-                                          // Advansed Settings - Playback Priority
-                                          "\"OverridePriority\"",
-                                          "\"Priority\"",
-                                          "\"PriorityDistanceFactor\"",
-                                          "\"PriorityDistanceOffset\"", 
-                                          // Common Property for Container
-                                          "\"Weight\"", 
-                                          // BlendContainer
-                                          "\"BlendBehavior\"", 
-                                          // RandomSequenceContainer
-                                          "\"GlobalOrPerObject\"", "\"RandomOrSequence\"",
-                                          "\"NormalOrShuffle\"", "\"RandomAvoidRepeating\"", "\"RandomAvoidRepeatingCount\"",
-                                          "\"RestartBeginningOrBackward\"",
-                                          "\"PlayMechanismStepOrContinuous\"", "\"PlayMechanismResetPlaylistEachPlay\"",
-                                          "\"PlayMechanismLoop\"", "\"PlayMechanismInfiniteOrNumberOfLoops\"", "\"PlayMechanismLoopCount\"",
-                                          "\"PlayMechanismSpecialTransitions\"", "\"PlayMechanismSpecialTransitionsType\"", "\"PlayMechanismSpecialTransitionsValue\"", 
-                                          // SwitchContainer
-                                          "\"SwitchBehavior\"", "\"SwitchGroupOrStateGroup\"", "\"DefaultSwitchOrState\"",};
-            
-            foreach (var WithAtProperty in WithAtProperties)
-            {
-                ArgmentString = ArgmentString.Replace(WithAtProperty, WithAtProperty.Insert(1,"@"));
-            }
-            */
-            System.Diagnostics.Debug.WriteLine("\nArgmentString:\n" + ArgmentString);
-
             // Make Call argument as JObject
-            //var ArgConvertTo = JObject.Parse(ArgmentString);
-            var ArgConvertTo = JObject.Parse(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(SelectedObjInfo.ToString().Replace("@", "_")),
+            var ArgConvertTo = JObject.Parse(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(SelectedObjInfo.ToString().Replace("\"@", "\"_")),
                                                                           Formatting.Indented,
-                                                                          new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }).Replace("_", "@"));
+                                                                          new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }).Replace("\"_", "\"@"));
 
             // Modify info to use args for object creation
             ArgConvertTo.Add("onNameConflict", "rename");
 
             switch (ConvertTo)
             {
-                case ("SwitchContainer"):
-                    if (ArgConvertTo["category"].ToString() == "SwitchContainer")
+                case ("ActorMixer"):
+                    if ((ArgConvertTo["type"].ToString() ?? "None") == "ActorMixer")
                     {
                         return 0;
                     }
-                    ArgConvertTo["category"] = "SwitchContainer";
+                    ArgConvertTo["type"] = "ActorMixer";
+                    break;
+
+                case ("BlendContainer"):
+                    if ((ArgConvertTo["type"].ToString() ?? "None") == "BlendContainer")
+                    {
+                        return 0;
+                    }
+                    ArgConvertTo["type"] = "BlendContainer";
                     break;
 
                 case ("RandomContainer"):
@@ -366,6 +245,24 @@ namespace AK.Wwise.Waapi
                     ArgConvertTo["@RandomOrSequence"] = 1;
                     break;
 
+                case ("SequenceContainer"):
+                    if ((ArgConvertTo["type"].ToString() ?? "None") == "RandomSequenceContainer"
+                        && (ArgConvertTo["@RandomOrSequence"].ToString() ?? "None") == "0")
+                    {
+                        return 0;
+                    }
+                    ArgConvertTo["type"] = "RandomSequenceContainer";
+                    ArgConvertTo["@RandomOrSequence"] = 0;
+                    break;
+
+                case ("SwitchContainer"):
+                    if (ArgConvertTo["category"].ToString() == "SwitchContainer")
+                    {
+                        return 0;
+                    }
+                    ArgConvertTo["category"] = "SwitchContainer";
+                    break;
+
                 default:
                     return 0;
 
@@ -373,7 +270,6 @@ namespace AK.Wwise.Waapi
             System.Diagnostics.Debug.WriteLine("\nArgConvertTo:\n" + ArgConvertTo);
 
             await client.Call(ak.wwise.core.@object.create, ArgConvertTo, null).ConfigureAwait(false);
-            //var ObjInfo = await client.Call(ak.wwise.core.@object.get, ArgGetProjName, OptGetProjName).ConfigureAwait(false);
 
             return 0;
         }

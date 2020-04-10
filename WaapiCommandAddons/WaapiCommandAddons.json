@@ -29,27 +29,99 @@
       }
     },
     {
-      "id": "ak.wca.execute_exttest",
-      "displayName": "Execute Test Cmd",
-      "defaultShortcut": "",
+      "id": "ak.wca.convertcontainer_atoa",
+      "displayName": "Convert to Actor-Mixer",
+      "defaultShortcut": "Alt+A",
       "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
       "startMode": "SingleSelectionSingleProcess",
       "args": [
-        "--execute",
-        "${WwiseInstallAddons}\\show_cmd_args.bat",
-        "--projname"
+        "--convert",
+        "ActorMixer"
       ],
-      "mainMenu": {
-        "basePath": "TEST"
+      "contextMenu": {
+        "basePath": "Convert Container Type/Convert to Actor-Mixer",
+        "enabledFor": [
+          "BlendContainer",
+          "RandomSequenceContainer",
+          "SwitchContainer"
+        ]
       }
     },
     {
-      "id": "ak.wca.reaper_recall_project",
-      "displayName": "Edit in Reaper",
-      "defaultShortcut": "Ctrl+R",
+      "id": "ak.wca.convertcontainer_atod",
+      "displayName": "Convert to BlendContainer",
+      "defaultShortcut": "Alt+D",
       "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
-      "startMode": "MultipleSelectionSingleProcessSpaceSeparated",
-      "args": "-a \"C:/Program Files (x86)/Audiokinetic/Wwise 2019.2.0.7216/Authoring/Data/Add-ons/Commands/reaper_open_project.bat\" -t reaprojpath"
-    }
+      "startMode": "SingleSelectionSingleProcess",
+      "args": [
+        "--convert",
+        "BlendContainer"
+      ],
+      "contextMenu": {
+        "basePath": "Convert Container Type/Convert to BlendContainer",
+        "enabledFor": [
+          "ActorMixer",
+          "RandomSequenceContainer",
+          "SwitchContainer"
+        ]
+      }
+    },
+    {
+      "id": "ak.wca.convertcontainer_ator",
+      "displayName": "Convert to RandomContainer",
+      "defaultShortcut": "Alt+R",
+      "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
+      "startMode": "SingleSelectionSingleProcess",
+      "args": [
+        "--convert",
+        "RandomContainer"
+      ],
+      "contextMenu": {
+        "basePath": "Convert Container Type/Convert to RandomContainer",
+        "enabledFor": [
+          "ActorMixer",
+          "BlendContainer",
+          "SwitchContainer"
+        ]
+      }
+    },
+    {
+      "id": "ak.wca.convertcontainer_atoq",
+      "displayName": "Convert to SequenceContainer",
+      "defaultShortcut": "Alt+Q",
+      "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
+      "startMode": "SingleSelectionSingleProcess",
+      "args": [
+        "--convert",
+        "SequenceContainer"
+      ],
+      "contextMenu": {
+        "basePath": "Convert Container Type/Convert to SequenceContainer",
+        "enabledFor": [
+          "ActorMixer",
+          "BlendContainer",
+          "SwitchContainer"
+        ]
+      }
+    },
+    {
+      "id": "ak.wca.convertcontainer_atod",
+      "displayName": "Convert to SwitchContainer",
+      "defaultShortcut": "Alt+W",
+      "program": "${WwiseInstallAddons}\\WaapiCommandAddons.exe",
+      "startMode": "SingleSelectionSingleProcess",
+      "args": [
+        "--convert",
+        "SwitchContainer"
+      ],
+      "contextMenu": {
+        "basePath": "Convert Container Type/Convert to SwitchContainer",
+        "enabledFor": [
+          "ActorMixer",
+          "BlendContainer",
+          "RandomSequenceContainer"
+        ]
+      }
+    },
   ]
 }

@@ -5,201 +5,209 @@ using System.Text;
 using System.Linq;
 
 
-#pragma warning disable CS0649, CA1812, CA2211
+#pragma warning disable CS0649, CA1812, CA2211,CA1707
 namespace AK.Wwise.Waapi
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>")]
     public class WwiseObjectsReference
     {
+        public WwiseObjectsReference() { }
         public static string[] GetPropertyNames()
         {
-            return typeof(WwiseObjectsReference).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).Select(n => n.Name).ToArray();
+            return typeof(WwiseObjectsReference).GetFields(System.Reflection.BindingFlags.Public).Select(n => n.Name).ToArray();
         }
 
         private const string DefaultStr = "";
         private const string DefaultRefID = "{ 00000000 - 0000 - 0000 - 0000 - 000000000000 }";
 
-
+        // @ or none = そのプロパティに設定してある値を返す(Override関係なし)。
+        // @@ = そのプロパティの実際の値を返す。Overrideしていなかった場合はParentの値になる。
+        // General Settings
+        // if you need "switchContainerChild:context", add this.
         // General Settings - built-in accessors
-        public static string name;
+        public string name { get; set; }
         [DefaultValue(DefaultStr)]
-        public static string notes;
-        public static string type;
+        public string notes { get; set; }
+        public string type { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string parent;
+        public string parent { get; set; }
 
         // General Settings - object reference
         [DefaultValue(true)]
-        public static bool _Inclusion;
-        public static short _Color;
+        public bool _Inclusion { get; set; }
+        public short _Color { get; set; }
 
-        public static double _Volume;
-        public static short _Lowpass;
-        public static short _Highpass;
-        public static int _Pitch;
-        public static double _InitialDelay;
-        public static bool _OverrideOutput;
+        public double _Volume { get; set; }
+        public short _Lowpass { get; set; }
+        public short _Highpass { get; set; }
+        public int _Pitch { get; set; }
+        public double _InitialDelay { get; set; }
+        public bool _OverrideOutput { get; set; }
 
         [DefaultValue(DefaultRefID)]
-        public static string _OutputBus;
-        public static double _OutputBusVolume;
-        public static short _OutputBusLowpass;
-        public static short _OutputBusHighpass;
+        public string _OutputBus { get; set; }
+        public double _OutputBusVolume { get; set; }
+        public short _OutputBusLowpass { get; set; }
+        public short _OutputBusHighpass { get; set; }
 
-        public static bool _UseGameAuxSends;
-        public static bool _OverrideGameAuxSends;
-        public static double _GameAuxSendVolume;
-        public static short _GameAuxSendLPF;
-        public static short _GameAuxSendHPF;
+        public bool _UseGameAuxSends { get; set; }
+        public bool _OverrideGameAuxSends { get; set; }
+        public double _GameAuxSendVolume { get; set; }
+        public short _GameAuxSendLPF { get; set; }
+        public short _GameAuxSendHPF { get; set; }
 
-        public static bool _OverrideUserAuxSends;
+        public bool _OverrideUserAuxSends { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _UserAuxSend0;
-        public static double _UserAuxSendVolume0;
-        public static short _UserAuxSendLPF0;
-        public static short _UserAuxSendHPF0;
+        public string _UserAuxSend0 { get; set; }
+        public double _UserAuxSendVolume0 { get; set; }
+        public short _UserAuxSendLPF0 { get; set; }
+        public short _UserAuxSendHPF0 { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _UserAuxSend1;
-        public static double _UserAuxSendVolume1;
-        public static short _UserAuxSendLPF1;
-        public static short _UserAuxSendHPF1;
+        public string _UserAuxSend1 { get; set; }
+        public double _UserAuxSendVolume1 { get; set; }
+        public short _UserAuxSendLPF1 { get; set; }
+        public short _UserAuxSendHPF1 { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _UserAuxSend2;
-        public static double _UserAuxSendVolume2;
-        public static short _UserAuxSendLPF2;
-        public static short _UserAuxSendHPF2;
+        public string _UserAuxSend2 { get; set; }
+        public double _UserAuxSendVolume2 { get; set; }
+        public short _UserAuxSendLPF2 { get; set; }
+        public short _UserAuxSendHPF2 { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _UserAuxSend3;
-        public static double _UserAuxSendVolume3;
-        public static short _UserAuxSendLPF3;
-        public static short _UserAuxSendHPF3;
+        public string _UserAuxSend3 { get; set; }
+        public double _UserAuxSendVolume3 { get; set; }
+        public short _UserAuxSendLPF3 { get; set; }
+        public short _UserAuxSendHPF3 { get; set; }
 
-        public static bool _OverrideEarlyReflections;
+        public bool _OverrideEarlyReflections { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _ReflectionsAuxSend;
-        public static double _ReflectionsVolume;
+        public string _ReflectionsAuxSend { get; set; }
+        public double _ReflectionsVolume { get; set; }
 
         // Conversion
-        public static bool _OverrideConversion;
+        public bool _OverrideConversion { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _Conversion;
-        public static bool _OverrideAnalysis;
-        public static bool _EnableLoudnessNormalization;
-        public static double _MakeUpGain;
+        public string _Conversion { get; set; }
+        public bool _OverrideAnalysis { get; set; }
+        public bool _EnableLoudnessNormalization { get; set; }
+        public double _MakeUpGain { get; set; }
         // Effects
-        public static bool _OverrideEffect;
-        public static bool _BypassEffect;
+        public bool _OverrideEffect { get; set; }
+        public bool _BypassEffect { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _Effect0;
-        public static bool _RenderEffect0;
-        public static bool _BypassEffect0;
+        public string _Effect0 { get; set; }
+        public bool _RenderEffect0 { get; set; }
+        public bool _BypassEffect0 { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _Effect1;
-        public static bool _RenderEffect1;
-        public static bool _BypassEffect1;
+        public string _Effect1 { get; set; }
+        public bool _RenderEffect1 { get; set; }
+        public bool _BypassEffect1 { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _Effect2;
-        public static bool _RenderEffect2;
-        public static bool _BypassEffect2;
+        public string _Effect2 { get; set; }
+        public bool _RenderEffect2 { get; set; }
+        public bool _BypassEffect2 { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _Effect3;
-        public static bool _RenderEffect3;
-        public static bool _BypassEffect3;
+        public string _Effect3 { get; set; }
+        public bool _RenderEffect3 { get; set; }
+        public bool _BypassEffect3 { get; set; }
         // Positioning
-        public static bool _OverridePositioning;
-        public static int _CenterPercentage;
-        public static short _SpeakerPanning;
+        public bool _OverridePositioning { get; set; }
+        public int _CenterPercentage { get; set; }
+        public short _SpeakerPanning { get; set; }
         [DefaultValue(true)]
-        public static bool _ListenerRelativeRouting;
-        public static short _3DSpatialization;
+        public bool _ListenerRelativeRouting { get; set; }
+        public short _3DSpatialization { get; set; }
         [DefaultValue(100)]
-        public static int _SpeakerPanning3DSpatializationMix;
+        public int _SpeakerPanning3DSpatializationMix { get; set; }
         [DefaultValue(true)]
-        public static bool _EnableAttenuation;
+        public bool _EnableAttenuation { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _Attenuation;
-        public static short _3DPosition;
-        public static bool _HoldListenerOrientation;
-        public static bool _HoldEmitterPositionOrientation;
-        public static bool _EnableDiffraction;
+        public string _Attenuation { get; set; }
+        public short _3DPosition { get; set; }
+        public bool _HoldListenerOrientation { get; set; }
+        public bool _HoldEmitterPositionOrientation { get; set; }
+        public bool _EnableDiffraction { get; set; }
         // HDR
-        public static bool _OverrideHdrEnvelope;
-        public static bool _HdrEnableEnvelope;
+        public bool _OverrideHdrEnvelope { get; set; }
+        public bool _HdrEnableEnvelope { get; set; }
         [DefaultValue(20)]
-        public static double _HdrEnvelopeSensitivity;
+        public double _HdrEnvelopeSensitivity { get; set; }
         [DefaultValue(12)]
-        public static double _HdrActiveRange;
+        public double _HdrActiveRange { get; set; }
         // Mixer Plug-in
-        public static bool _OverrideAttachableMixerInput;
+        public bool _OverrideAttachableMixerInput { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _AttachableMixerInput;
+        public string _AttachableMixerInput { get; set; }
         // MIDI
-        public static bool _OverrideMidiEventsBehavior;
+        public bool _OverrideMidiEventsBehavior { get; set; }
         [DefaultValue(1)]
-        public static short _MidiPlayOnNoteType;
-        public static bool _MidiBreakOnNoteOff;
-        public static bool _OverrideMidiNoteTracking;
-        public static bool _EnableMidiNoteTracking;
+        public short _MidiPlayOnNoteType { get; set; }
+        public bool _MidiBreakOnNoteOff { get; set; }
+        public bool _OverrideMidiNoteTracking { get; set; }
+        public bool _EnableMidiNoteTracking { get; set; }
         [DefaultValue(60)]
-        public static int _MidiTrackingRootNote;
-        public static int _MidiTransposition;
-        public static int _MidiVelocityOffset;
+        public int _MidiTrackingRootNote { get; set; }
+        public int _MidiTransposition { get; set; }
+        public int _MidiVelocityOffset { get; set; }
         [DefaultValue(127)]
-        public static int _MidiKeyFilterMax;
-        public static int _MidiKeyFilterMin;
+        public int _MidiKeyFilterMax { get; set; }
+        public int _MidiKeyFilterMin { get; set; }
         [DefaultValue(127)]
-        public static int _MidiVelocityFilterMax;
-        public static int _MidiVelocityFilterMin;
+        public int _MidiVelocityFilterMax { get; set; }
+        public int _MidiVelocityFilterMin { get; set; }
         [DefaultValue(65535)]
-        public static int _MidiChannelFilter;
+        public int _MidiChannelFilter { get; set; }
         // Advansed Settings - Playback Limit
-        public static bool _IgnoreParentMaxSoundInstance;
-        public static bool _UseMaxSoundPerInstance;
+        public bool _IgnoreParentMaxSoundInstance { get; set; }
+        public bool _UseMaxSoundPerInstance { get; set; }
         [DefaultValue(50)]
-        public static short _MaxSoundPerInstance;
-        public static short _IsGlobalLimit;
-        public static bool _OverLimitBehavior;
-        public static short _MaxReachedBehavior;
+        public short _MaxSoundPerInstance { get; set; }
+        public short _IsGlobalLimit { get; set; }
+        public bool _OverLimitBehavior { get; set; }
+        public short _MaxReachedBehavior { get; set; }
         // Advansed Settings - Virtual Voice
-        public static bool _OverrideVirtualVoice;
-        public static short _BelowThresholdBehavior;
+        public bool _OverrideVirtualVoice { get; set; }
+        public short _BelowThresholdBehavior { get; set; }
         [DefaultValue(1)]
-        public static short _VirtualVoiceQueueBehavior;
+        public short _VirtualVoiceQueueBehavior { get; set; }
         // Advansed Settings - Playback Priority
-        public static bool _OverridePriority;
+        public bool _OverridePriority { get; set; }
         [DefaultValue(50)]
-        public static short _Priority;
-        public static bool _PriorityDistanceFactor;
+        public short _Priority { get; set; }
+        public bool _PriorityDistanceFactor { get; set; }
         [DefaultValue(-10)]
-        public static short _PriorityDistanceOffset;
+        public short _PriorityDistanceOffset { get; set; }
+
+        /*
+         * TODO: how to handle Container Properies...
         // Common Property for Container
         [DefaultValue(50)]
-        public static double _Weight;
+        public double _Weight { get; set; }
         // BlendContainer
-        public static short _BlendBehavior;
+        public short _BlendBehavior { get; set; 
         // RandomSequenceContainer
-        public static short _GlobalOrPerObject;
-        public static short _RandomOrSequence;
-        public static short _NormalOrShuffle;
+        public short _GlobalOrPerObject { get; set; }
+        public short _RandomOrSequence { get; set; }
+        public short _NormalOrShuffle { get; set; }
         [DefaultValue(true)]
-        public static bool _RandomAvoidRepeating;
-        public static int _RandomAvoidRepeatingCount;
-        public static short _RestartBeginningOrBackward;
-        public static short _PlayMechanismStepOrContinuous;
+        public bool _RandomAvoidRepeating { get; set; }
+        public int _RandomAvoidRepeatingCount { get; set; }
+        public short _RestartBeginningOrBackward { get; set; }
+        public short _PlayMechanismStepOrContinuous { get; set; }
         [DefaultValue(true)]
-        public static bool _PlayMechanismResetPlaylistEachPlay;
-        public static bool _PlayMechanismLoop;
-        public static short _PlayMechanismInfiniteOrNumberOfLoops;
-        public static int _PlayMechanismLoopCount;
-        public static bool _PlayMechanismSpecialTransitions;
-        public static short _PlayMechanismSpecialTransitionsType;
-        public static double _PlayMechanismSpecialTransitionsValue;
+        public bool _PlayMechanismResetPlaylistEachPlay { get; set; }
+        public bool _PlayMechanismLoop { get; set; }
+        public short _PlayMechanismInfiniteOrNumberOfLoops { get; set; }
+        public int _PlayMechanismLoopCount { get; set; }
+        public bool _PlayMechanismSpecialTransitions { get; set; }
+        public short _PlayMechanismSpecialTransitionsType { get; set; }
+        public double _PlayMechanismSpecialTransitionsValue { get; set; }
         // SwitchContainer
-        public static short _SwitchBehavior;
+        public short _SwitchBehavior { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _SwitchGroupOrStateGroup;
+        public string _SwitchGroupOrStateGroup { get; set; }
         [DefaultValue(DefaultRefID)]
-        public static string _DefaultSwitchOrState;
+        public string _DefaultSwitchOrState { get; set; }
+        */
     }
 }
-#pragma warning restore CS0649, CA1812, CA2211
+#pragma warning restore CS0649, CA1812, CA2211,CA1707

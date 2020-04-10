@@ -65,8 +65,7 @@ Command:
                     {
                         if (args[1].StartsWith("-"))
                         {
-                            string ExecAppPath = String.Join(" ", args[2..]);
-                            await WaapiCommandFunction.ExecuteExternalApplication(client, ExecAppPath, args[1]).ConfigureAwait(false);
+                            await WaapiCommandFunction.ExecuteExternalApplication(client, String.Join(" ", args[2..]), args[1]).ConfigureAwait(false);
                         }
                         else
                         {
