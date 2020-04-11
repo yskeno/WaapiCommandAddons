@@ -220,47 +220,55 @@ namespace AK.Wwise.Waapi
             switch (ConvertTo)
             {
                 case ("ActorMixer"):
-                    if ((ArgConvertTo["type"].ToString() ?? "None") == "ActorMixer")
-                    {
+                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "ActorMixer")
                         return 0;
-                    }
+
+                    ArgConvertTo["@RandomOrSequence"]?.Parent.Remove();
                     ArgConvertTo["type"] = "ActorMixer";
                     break;
 
                 case ("BlendContainer"):
-                    if ((ArgConvertTo["type"].ToString() ?? "None") == "BlendContainer")
-                    {
+                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "BlendContainer")
                         return 0;
-                    }
+
+                    ArgConvertTo["@RandomOrSequence"]?.Parent.Remove();
                     ArgConvertTo["type"] = "BlendContainer";
                     break;
 
                 case ("RandomContainer"):
-                    if ((ArgConvertTo["type"].ToString() ?? "None") == "RandomSequenceContainer"
-                        && (ArgConvertTo["@RandomOrSequence"].ToString() ?? "None") == "1")
-                    {
+
+                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "RandomSequenceContainer" &&
+                        (ArgConvertTo["@RandomOrSequence"]?.ToString() ?? "None") == "1")
                         return 0;
-                    }
-                    ArgConvertTo["type"] = "RandomSequenceContainer";
+
+                    if (ArgConvertTo["@RandomOrSequence"] == null)
+                        ArgConvertTo.Add("@RandomOrSequence", 0);
+                    else
+                        ArgConvertTo["@RandomOrSequence"] = 0;
+
                     ArgConvertTo["@RandomOrSequence"] = 1;
+                    ArgConvertTo["type"] = "RandomSequenceContainer";
                     break;
 
                 case ("SequenceContainer"):
-                    if ((ArgConvertTo["type"].ToString() ?? "None") == "RandomSequenceContainer"
-                        && (ArgConvertTo["@RandomOrSequence"].ToString() ?? "None") == "0")
-                    {
+                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "RandomSequenceContainer" &&
+                        (ArgConvertTo["@RandomOrSequence"]?.ToString() ?? "None") == "0")
                         return 0;
-                    }
+
+                    if (ArgConvertTo["@RandomOrSequence"] == null)
+                        ArgConvertTo.Add("@RandomOrSequence", 0);
+                    else
+                        ArgConvertTo["@RandomOrSequence"] = 0;
+
                     ArgConvertTo["type"] = "RandomSequenceContainer";
-                    ArgConvertTo["@RandomOrSequence"] = 0;
                     break;
 
                 case ("SwitchContainer"):
-                    if (ArgConvertTo["category"].ToString() == "SwitchContainer")
-                    {
+                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "SwitchContainer")
                         return 0;
-                    }
-                    ArgConvertTo["category"] = "SwitchContainer";
+
+                    ArgConvertTo["@RandomOrSequence"]?.Parent.Remove();
+                    ArgConvertTo["type"] = "SwitchContainer";
                     break;
 
                 default:

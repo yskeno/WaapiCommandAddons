@@ -185,9 +185,9 @@ namespace AK.Wwise.Waapi
         // BlendContainer
         public short _BlendBehavior { get; set; 
         // RandomSequenceContainer
-        public short _GlobalOrPerObject { get; set; }
+        public short _GlobalOrPerObject { get; set; }   */
         public short _RandomOrSequence { get; set; }
-        public short _NormalOrShuffle { get; set; }
+/*        public short _NormalOrShuffle { get; set; }
         [DefaultValue(true)]
         public bool _RandomAvoidRepeating { get; set; }
         public int _RandomAvoidRepeatingCount { get; set; }
