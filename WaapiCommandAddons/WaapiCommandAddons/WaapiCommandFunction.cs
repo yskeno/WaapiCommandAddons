@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.IsolatedStorage;
 using Newtonsoft.Json;
+using System.Runtime.CompilerServices;
 
 namespace AK.Wwise.Waapi
 {
@@ -15,6 +16,37 @@ namespace AK.Wwise.Waapi
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
     static class WaapiCommandFunction
     {
+
+#if DEBUG
+        static Stopwatch stopwatch = new Stopwatch();
+#endif // DEBUG
+
+        [Conditional("DEBUG")]
+        public static void DEBUG_STARTTIME(string msg = null)
+        {
+            if (msg != null)
+                msg = msg + ": ";
+
+            WaapiCommandFunction.stopwatch.Restart();
+            System.Diagnostics.Debug.WriteLine("====== STOPWATCH: " + msg + WaapiCommandFunction.stopwatch.ElapsedMilliseconds + " msec");
+        }
+        [Conditional("DEBUG")]
+        public static void DEBUG_LAPTIME(string msg = null)
+        {
+            if (msg != null)
+                msg = msg + ": ";
+            System.Diagnostics.Debug.WriteLine("====== STOPWATCH: " + msg + WaapiCommandFunction.stopwatch.ElapsedMilliseconds + " msec");
+        }
+        [Conditional("DEBUG")]
+        public static void DEBUG_STOPTIME(string msg = null)
+        {
+            if (msg != null)
+                msg = msg + ": ";
+            WaapiCommandFunction.stopwatch.Stop();
+            System.Diagnostics.Debug.WriteLine("====== STOPWATCH: " + msg + WaapiCommandFunction.stopwatch.ElapsedMilliseconds + " msec");
+        }
+
+
         /// <summary>
         /// Check whether Wwise already connect to any host.
         /// </summary>
@@ -183,20 +215,28 @@ namespace AK.Wwise.Waapi
             return 0;
         }
 
-        public static async Task<int> ConvertContainerType(dotNetJsonClient client, string ConvertTo = null)
+        /// <summary>
+        /// Get all modified properties of selected single object as JSON string.
+        /// </summary>
+        /// <param name="client">AK.Wwise.Waapi.dotNetJsonClient instance.</param>
+        /// <returns>All modified propertiws of selected object as JSON string.</returns>
+        private static async Task<string> GetSelectedObjectInfo(dotNetJsonClient client)
         {
-            System.Diagnostics.Debug.WriteLine("*** ConvertContainerType() ***");
-
+            System.Diagnostics.Debug.WriteLine("*** GetSelectedObjectInfo() ***");
             // Get Selected Object Info
             var OptSelectedObjInfo = JObject.Parse("{ \"return\": [ \"" +
-                                                        (String.Join("\", \"", typeof(WwiseObjectsReference).GetProperties().Select(f => f.Name).ToArray())).Replace("\"_", "\"@") +
-                                                                    "\" ] }");
+                                            (String.Join("\", \"", typeof(WwiseObjectsReference).GetProperties().Select(f => f.Name).ToArray())).Replace("\"_", "\"@") +
+                                                        "\" ] }");
             System.Diagnostics.Debug.WriteLine("\nOptSelectedObjInfo:\n" + OptSelectedObjInfo);
+
+            DEBUG_LAPTIME("End OptSelectedObjInfo");
 
             var SelectedObjInfo = (JObject)(await client.Call(ak.wwise.ui.getSelectedObjects,
                                                               null,
                                                               OptSelectedObjInfo).ConfigureAwait(false))["objects"][0];
             System.Diagnostics.Debug.WriteLine("\nSelectedObjInfo:\n" + SelectedObjInfo);
+
+            DEBUG_LAPTIME("End SelectedObjInfo");
 
             var NestedProperties = new[] { "parent", "@OutputBus", "@UserAuxSend0", "@UserAuxSend1", "@UserAuxSend2", "@UserAuxSend3", "@ReflectionsAuxSend",
                                            "@Conversion", "@Effect0", "@Effect1", "@Effect2", "@Effect3", "@Attenuation", "@AttachableMixerInput",
@@ -207,79 +247,154 @@ namespace AK.Wwise.Waapi
                 SelectedObjInfo[NestedProperty] = SelectedObjInfo[NestedProperty]["id"];
             }
 
+            DEBUG_LAPTIME("End NestedProperties");
+
             // Remove '@' and ignore DefaultValue items.
-            // And add '@' again to use argments of object creation.
-            // Make Call argument as JObject
-            var ArgConvertTo = JObject.Parse(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(SelectedObjInfo.ToString().Replace("\"@", "\"_")),
+            // Then, add '@' again to use argments of object creation.
+            return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(SelectedObjInfo.ToString().Replace("\"@", "\"_")),
                                                                           Formatting.Indented,
-                                                                          new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }).Replace("\"_", "\"@"));
+                                                                          new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }).Replace("\"_", "\"@");
+        }
+
+        private static async Task<string> GetChildrenObject(dotNetJsonClient client, string path)
+        {
+            var GetChildrenInfo = await client.Call(ak.wwise.core.@object.get, path, null).ConfigureAwait(false);
+            return GetChildrenInfo?.ToString();
+        }
+
+        /// <summary>
+        /// Convert ContainerType.
+        /// </summary>
+        /// <param name="client">AK.Wwise.Waapi.dotNetJsonClient instance.</param>
+        /// <param name="ConvertTo">Container type you want to convert to.</param>
+        /// <returns>Error: -1, Success: Other int</returns>
+        public static async Task<int> ConvertContainerType(dotNetJsonClient client, string ConvertTo = null)
+        {
+            DEBUG_STARTTIME("Start ConvertContainerType()");
+            System.Diagnostics.Debug.WriteLine("*** ConvertContainerType() ***");
+
+            // Get Selected Object Info
+            var SelectedObjInfo = JObject.Parse(await GetSelectedObjectInfo(client).ConfigureAwait(false));
+            DEBUG_LAPTIME("Start DeepCopy() SelectedObjInfo->ArgConvertTo");
+            JObject ArgConvertTo = (JObject)SelectedObjInfo.DeepClone();
+            DEBUG_LAPTIME("End DeepCopy() SelectedObjInfo->ArgConvertTo");
+            System.Diagnostics.Debug.WriteLine("*** " + (SelectedObjInfo == ArgConvertTo));
+
+            DEBUG_LAPTIME("End GetSelectedObjectInfo()");
 
             // Modify info to use args for object creation
+            ArgConvertTo.Remove("id");
+            ArgConvertTo.Remove("childrenCount");
             ArgConvertTo.Add("onNameConflict", "rename");
 
             switch (ConvertTo)
             {
                 case ("ActorMixer"):
-                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "ActorMixer")
-                        return 0;
-
-                    ArgConvertTo["@RandomOrSequence"]?.Parent.Remove();
-                    ArgConvertTo["type"] = "ActorMixer";
-                    break;
-
                 case ("BlendContainer"):
-                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "BlendContainer")
+                case ("SwitchContainer"):
+                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == ConvertTo)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Convert is stopped. Selected Container type is same as ConvertTo.");
                         return 0;
-
+                    }
                     ArgConvertTo["@RandomOrSequence"]?.Parent.Remove();
-                    ArgConvertTo["type"] = "BlendContainer";
+                    ArgConvertTo["type"] = ConvertTo;
                     break;
 
                 case ("RandomContainer"):
-
-                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "RandomSequenceContainer" &&
-                        (ArgConvertTo["@RandomOrSequence"]?.ToString() ?? "None") == "1")
-                        return 0;
-
-                    if (ArgConvertTo["@RandomOrSequence"] == null)
-                        ArgConvertTo.Add("@RandomOrSequence", 0);
-                    else
-                        ArgConvertTo["@RandomOrSequence"] = 0;
-
-                    ArgConvertTo["@RandomOrSequence"] = 1;
-                    ArgConvertTo["type"] = "RandomSequenceContainer";
-                    break;
-
                 case ("SequenceContainer"):
-                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "RandomSequenceContainer" &&
-                        (ArgConvertTo["@RandomOrSequence"]?.ToString() ?? "None") == "0")
-                        return 0;
+                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "RandomSequenceContainer")
+                        if (((ConvertTo == "SequenceContainer") && (ArgConvertTo["@RandomOrSequence"]?.ToString() == "0")) ||
+                            ((ConvertTo == "RandomContainer") && (ArgConvertTo["@RandomOrSequence"]?.ToString() == "1")))
+                        {
+                            System.Diagnostics.Debug.WriteLine("Convert is stopped. Selected Container type is same as ConvertTo.");
+                            return 0;
+                        }
 
                     if (ArgConvertTo["@RandomOrSequence"] == null)
-                        ArgConvertTo.Add("@RandomOrSequence", 0);
+                    {
+                        if (ConvertTo == "SequenceContainer")
+                            ArgConvertTo.Add("@RandomOrSequence", 0);
+                        else
+                            ArgConvertTo.Add("@RandomOrSequence", 1);
+                    }
                     else
-                        ArgConvertTo["@RandomOrSequence"] = 0;
-
+                    {
+                        if (ConvertTo == "SequenceContainer")
+                            ArgConvertTo["@RandomOrSequence"] = 0;
+                        else
+                            ArgConvertTo["@RandomOrSequence"] = 1;
+                    }
                     ArgConvertTo["type"] = "RandomSequenceContainer";
-                    break;
-
-                case ("SwitchContainer"):
-                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "SwitchContainer")
-                        return 0;
-
-                    ArgConvertTo["@RandomOrSequence"]?.Parent.Remove();
-                    ArgConvertTo["type"] = "SwitchContainer";
                     break;
 
                 default:
+                    System.Diagnostics.Debug.WriteLine("No Argment of Containert Type for Convert to.");
                     return 0;
-
             }
             System.Diagnostics.Debug.WriteLine("\nArgConvertTo:\n" + ArgConvertTo);
 
-            await client.Call(ak.wwise.core.@object.create, ArgConvertTo, null).ConfigureAwait(false);
+            DEBUG_LAPTIME("Start ak.wwise.core.@object.create");
+
+            var CreatedContainer = await client.Call(ak.wwise.core.@object.create, ArgConvertTo, null).ConfigureAwait(false);
+
+            DEBUG_LAPTIME("End ak.wwise.core.@object.create");
+
+            // Move children to new created container
+            if (SelectedObjInfo["childrenCount"]?.ToString() == "0")
+            {
+                System.Diagnostics.Debug.WriteLine("No children found. Finish convert container successfully.");
+                return 0;
+            }
+
+            // Argument & Option for get children's ID
+            JObject ArgGetChildrenInfo = new JObject {
+                {"from", new JObject{
+                    {"id", new JArray{
+                        SelectedObjInfo["id"]?.ToString()
+                    }}}
+                },
+                {"transform",new JArray{
+                    new JObject{
+                        {"select", new JArray{
+                            "children"
+                        }}}}}
+            };
+            JObject OptGetChildrenInfo = new JObject{
+                { "return", new JArray { "id" } }
+            };
+            System.Diagnostics.Debug.WriteLine("\nArgGetChildrenInfo:\n" + ArgGetChildrenInfo);
+            System.Diagnostics.Debug.WriteLine("\nOptGetChildrenInfo:\n" + OptGetChildrenInfo);
+
+            var ChildrenInfo = await client.Call(ak.wwise.core.@object.get, ArgGetChildrenInfo, OptGetChildrenInfo).ConfigureAwait(false);
+            System.Diagnostics.Debug.WriteLine("\nGetChildrenInfo:\n" + ChildrenInfo);
+
+            // Argument for move descendants to new container
+            var ArgMoveTo = new JObject{
+                { "parent", CreatedContainer["id"] },
+                { "onNameConflict", "rename" }
+            };
+            System.Diagnostics.Debug.WriteLine("\nArgMoveTo:\n" + ArgMoveTo);
+
+            foreach (var ChildInfo in ChildrenInfo["return"].Children<JObject>())
+            {
+                ArgMoveTo["object"] = ChildInfo["id"];
+                System.Diagnostics.Debug.WriteLine("\nArgMoveTo:\n" + ArgMoveTo);
+                await client.Call(ak.wwise.core.@object.move, ArgMoveTo, null).ConfigureAwait(false);
+            }
+
+            /*
+
+            DEBUG_STOPTIME("End ConvertContainerType()");
+            */
 
             return 0;
         }
+
+        //public static async Task<int> MoveAllDescendants(AK.Wwise.Waapi.dotNetJsonClient client, JObject ParentContainer)
+        //{
+        //    await client.Call(ak.wwise.core.@object.create, null, null).ConfigureAwait(false);
+        //    return 0;
+        //}
     }
 }

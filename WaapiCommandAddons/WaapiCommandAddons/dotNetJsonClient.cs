@@ -35,6 +35,8 @@ namespace AK.Wwise.Waapi
         public event Wamp.DisconnectedHandler Disconnected;
         //private readonly System.Text.Json.JsonSerializerOptions serializeOptions = new JsonSerializerOptions { WriteIndented = true };
 
+        private const int TimeoutMilliSec = 60000; // Change to 1min because DefaultValue(System.Int32.MaxValue) is too long.
+
         public dotNetJsonClient()
         {
             client.Disconnected += Client_Disconnected;
@@ -54,7 +56,7 @@ namespace AK.Wwise.Waapi
         /// <param name="timeout">The maximum timeout in milliseconds for the function to execute. Will raise Waapi.TimeoutException when timeout is reached.</param>
         public async Task Connect(
             string uri = "ws://localhost:8080/waapi",
-            int timeout = System.Int32.MaxValue)
+            int timeout = TimeoutMilliSec)
         {
             if (!client.IsConnected())
             {
@@ -90,7 +92,7 @@ namespace AK.Wwise.Waapi
             string uri,
             object args = null,
             object options = null,
-            int timeout = System.Int32.MaxValue)
+            int timeout = TimeoutMilliSec)
         {
             if (args == null)
                 args = new { };
@@ -117,7 +119,7 @@ namespace AK.Wwise.Waapi
             //System.Text.Json.JsonDocument args,
             Newtonsoft.Json.Linq.JObject options,
             //System.Text.Json.JsonDocument options,
-            int timeout = System.Int32.MaxValue)
+            int timeout = TimeoutMilliSec)
         {
             if (args == null)
                 args = new Newtonsoft.Json.Linq.JObject();
@@ -149,7 +151,7 @@ namespace AK.Wwise.Waapi
         public async System.Threading.Tasks.Task<int> Subscribe(
             string topic, object options,
             PublishHandler publishHandler,
-            int timeout = System.Int32.MaxValue)
+            int timeout = TimeoutMilliSec)
         {
             if (options == null)
                 options = new { };
@@ -172,7 +174,7 @@ namespace AK.Wwise.Waapi
             string topic,
             Newtonsoft.Json.Linq.JObject options,
             PublishHandler publishHandler,
-            int timeout = System.Int32.MaxValue)
+            int timeout = TimeoutMilliSec)
         {
             if (options == null)
                 options = new Newtonsoft.Json.Linq.JObject();
@@ -194,7 +196,7 @@ namespace AK.Wwise.Waapi
         /// <param name="timeout">The maximum timeout in milliseconds for the function to execute. Will raise Waapi.TimeoutException when timeout is reached.</param>
         public async Task Unsubscribe(
             int subscriptionId,
-            int timeout = System.Int32.MaxValue)
+            int timeout = TimeoutMilliSec)
         {
             await client.Unsubscribe(subscriptionId, timeout).ConfigureAwait(false);
         }

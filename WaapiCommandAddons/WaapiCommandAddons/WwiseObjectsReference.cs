@@ -11,26 +11,28 @@ namespace AK.Wwise.Waapi
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>")]
     public class WwiseObjectsReference
     {
+        // TOBEDELETED:
+        /*
         public WwiseObjectsReference() { }
         public static string[] GetPropertyNames()
         {
             return typeof(WwiseObjectsReference).GetFields(System.Reflection.BindingFlags.Public).Select(n => n.Name).ToArray();
         }
-
+        */
         private const string DefaultStr = "";
         private const string DefaultRefID = "{ 00000000 - 0000 - 0000 - 0000 - 000000000000 }";
 
         // @ or none = そのプロパティに設定してある値を返す(Override関係なし)。
         // @@ = そのプロパティの実際の値を返す。Overrideしていなかった場合はParentの値になる。
-        // General Settings
-        // if you need "switchContainerChild:context", add this.
-        // General Settings - built-in accessors
+        // General Settingss - built-in accessors
+        public string id { get; set; }
         public string name { get; set; }
         [DefaultValue(DefaultStr)]
         public string notes { get; set; }
         public string type { get; set; }
         [DefaultValue(DefaultRefID)]
         public string parent { get; set; }
+        public string childrenCount { get; set; }
 
         // General Settings - object reference
         [DefaultValue(true)]
@@ -187,27 +189,27 @@ namespace AK.Wwise.Waapi
         // RandomSequenceContainer
         public short _GlobalOrPerObject { get; set; }   */
         public short _RandomOrSequence { get; set; }
-/*        public short _NormalOrShuffle { get; set; }
-        [DefaultValue(true)]
-        public bool _RandomAvoidRepeating { get; set; }
-        public int _RandomAvoidRepeatingCount { get; set; }
-        public short _RestartBeginningOrBackward { get; set; }
-        public short _PlayMechanismStepOrContinuous { get; set; }
-        [DefaultValue(true)]
-        public bool _PlayMechanismResetPlaylistEachPlay { get; set; }
-        public bool _PlayMechanismLoop { get; set; }
-        public short _PlayMechanismInfiniteOrNumberOfLoops { get; set; }
-        public int _PlayMechanismLoopCount { get; set; }
-        public bool _PlayMechanismSpecialTransitions { get; set; }
-        public short _PlayMechanismSpecialTransitionsType { get; set; }
-        public double _PlayMechanismSpecialTransitionsValue { get; set; }
-        // SwitchContainer
-        public short _SwitchBehavior { get; set; }
-        [DefaultValue(DefaultRefID)]
-        public string _SwitchGroupOrStateGroup { get; set; }
-        [DefaultValue(DefaultRefID)]
-        public string _DefaultSwitchOrState { get; set; }
-        */
+        /*        public short _NormalOrShuffle { get; set; }
+                [DefaultValue(true)]
+                public bool _RandomAvoidRepeating { get; set; }
+                public int _RandomAvoidRepeatingCount { get; set; }
+                public short _RestartBeginningOrBackward { get; set; }
+                public short _PlayMechanismStepOrContinuous { get; set; }
+                [DefaultValue(true)]
+                public bool _PlayMechanismResetPlaylistEachPlay { get; set; }
+                public bool _PlayMechanismLoop { get; set; }
+                public short _PlayMechanismInfiniteOrNumberOfLoops { get; set; }
+                public int _PlayMechanismLoopCount { get; set; }
+                public bool _PlayMechanismSpecialTransitions { get; set; }
+                public short _PlayMechanismSpecialTransitionsType { get; set; }
+                public double _PlayMechanismSpecialTransitionsValue { get; set; }
+                // SwitchContainer
+                public short _SwitchBehavior { get; set; }
+                [DefaultValue(DefaultRefID)]
+                public string _SwitchGroupOrStateGroup { get; set; }
+                [DefaultValue(DefaultRefID)]
+                public string _DefaultSwitchOrState { get; set; }
+                */
     }
 }
-#pragma warning restore CS0649, CA1812, CA2211,CA1707
+#pragma warning restore CS0649, CA1812, CA2211, CA1707

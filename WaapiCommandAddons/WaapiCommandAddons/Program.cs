@@ -43,12 +43,16 @@ Command:
             {
                 try
                 {
+                    WaapiCommandFunction.DEBUG_STARTTIME();
+
                     AK.Wwise.Waapi.dotNetJsonClient client = new AK.Wwise.Waapi.dotNetJsonClient();
 
                     // Try to connect to running instance of Wwise on localhost, default port
                     await client.Connect().ConfigureAwait(false);
                     // Register for connection lost event
                     client.Disconnected += () => System.Console.WriteLine("We lost connection!");
+
+                    WaapiCommandFunction.DEBUG_STOPTIME();
 
                     if (args[0] == "-r" || args[0] == "--remote")
                     {
