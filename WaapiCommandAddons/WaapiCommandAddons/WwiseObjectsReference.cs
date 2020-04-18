@@ -40,10 +40,25 @@ namespace AK.Wwise.Waapi
         public short _Color { get; set; }
 
         public double _Volume { get; set; }
+        public bool randomizerVolume_Enabled { get; set; }
+        public double randomizerVolume_Max { get; set; }
+        public double randomizerVolume_Min { get; set; }
         public short _Lowpass { get; set; }
+        public bool randomizerLowpass_Enabled { get; set; }
+        public double randomizerLowpass_Max { get; set; }
+        public double randomizerLowpass_Min { get; set; }
         public short _Highpass { get; set; }
+        public bool randomizerHighpass_Enabled { get; set; }
+        public double randomizerHighpass_Max { get; set; }
+        public double randomizerHighpass_Min { get; set; }
         public int _Pitch { get; set; }
+        public bool randomizerPitch_Enabled { get; set; }
+        public double randomizerPitch_Max { get; set; }
+        public double randomizerPitch_Min { get; set; }
         public double _InitialDelay { get; set; }
+        public bool randomizerInitialDelay_Enabled { get; set; }
+        public double randomizerInitialDelay_Max { get; set; }
+        public double randomizerInitialDelay_Min { get; set; }
         public bool _OverrideOutput { get; set; }
 
         [DefaultValue(DefaultRefID)]

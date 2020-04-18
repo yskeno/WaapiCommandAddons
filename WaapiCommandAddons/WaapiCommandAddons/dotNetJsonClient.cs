@@ -31,9 +31,7 @@ namespace AK.Wwise.Waapi
     {
         private AK.Wwise.Waapi.Client client = new AK.Wwise.Waapi.Client();
         public delegate void PublishHandler(Newtonsoft.Json.Linq.JObject json);
-        //public delegate void PublishHandler(System.Text.Json.JsonDocument json);
         public event Wamp.DisconnectedHandler Disconnected;
-        //private readonly System.Text.Json.JsonSerializerOptions serializeOptions = new JsonSerializerOptions { WriteIndented = true };
 
         private const int TimeoutMilliSec = 60000; // Change to 1min because DefaultValue(System.Int32.MaxValue) is too long.
 
@@ -88,7 +86,6 @@ namespace AK.Wwise.Waapi
         /// <param name="timeout">The maximum timeout in milliseconds for the function to execute. Will raise Waapi.TimeoutException when timeout is reached.</param>
         /// <returns>A System.Text.Json.JsonDocument with the result of the Remote Procedure Call.</returns>
         public async System.Threading.Tasks.Task<Newtonsoft.Json.Linq.JObject> Call(
-        //public async System.Threading.Tasks.Task<System.Text.Json.JsonDocument> Call(
             string uri,
             object args = null,
             object options = null,
@@ -100,8 +97,6 @@ namespace AK.Wwise.Waapi
                 options = new { };
 
             return await Call(uri, Newtonsoft.Json.Linq.JObject.FromObject(args), Newtonsoft.Json.Linq.JObject.FromObject(options), timeout).ConfigureAwait(false);
-            //    return await Call(uri, System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(args, serializeOptions)),
-            //                           System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(options, serializeOptions)), timeout);
         }
 
         /// <summary>
@@ -113,32 +108,22 @@ namespace AK.Wwise.Waapi
         /// <param name="timeout">The maximum timeout in milliseconds for the function to execute. Will raise Waapi.TimeoutException when timeout is reached.</param>
         /// <returns>A System.Text.Json.JsonDocument with the result of the Remote Procedure Call.</returns>
         public async System.Threading.Tasks.Task<Newtonsoft.Json.Linq.JObject> Call(
-        //public async System.Threading.Tasks.Task<System.Text.Json.JsonDocument> Call(
             string uri,
             Newtonsoft.Json.Linq.JObject args,
-            //System.Text.Json.JsonDocument args,
             Newtonsoft.Json.Linq.JObject options,
-            //System.Text.Json.JsonDocument options,
             int timeout = TimeoutMilliSec)
         {
             if (args == null)
                 args = new Newtonsoft.Json.Linq.JObject();
-            //args = System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new { }, serializeOptions));
             if (options == null)
                 options = new Newtonsoft.Json.Linq.JObject();
-            //options = System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new { }, serializeOptions));
 
             string result = await client.Call(uri,
                                               args.ToString(),
                                               options.ToString(),
                                               timeout).ConfigureAwait(false);
-            //string result = await client.Call(uri,
-            //                                  args.ToString() != "System.Text.Json.JsonDocument" ? args.ToString() : "{}",
-            //                                  options.ToString() != "System.Text.Json.JsonDocument" ? options.ToString() : "{}",
-            //                                  timeout).ConfigureAwait(false);
 
             return Newtonsoft.Json.Linq.JObject.Parse(result);
-            //return System.Text.Json.JsonDocument.Parse(result);
         }
         /// <summary>
         /// Subscribe to a topic. Refer to WAAPI reference documentation to obtain the list of topics available.

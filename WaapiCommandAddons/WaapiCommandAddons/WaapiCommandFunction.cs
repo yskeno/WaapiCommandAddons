@@ -2,13 +2,10 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Reflection;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Text;
-using System.IO.IsolatedStorage;
 using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace AK.Wwise.Waapi
 {
@@ -16,37 +13,6 @@ namespace AK.Wwise.Waapi
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
     static class WaapiCommandFunction
     {
-
-#if DEBUG
-        static Stopwatch stopwatch = new Stopwatch();
-#endif // DEBUG
-
-        [Conditional("DEBUG")]
-        public static void DEBUG_STARTTIME(string msg = null)
-        {
-            if (msg != null)
-                msg = msg + ": ";
-
-            WaapiCommandFunction.stopwatch.Restart();
-            System.Diagnostics.Debug.WriteLine("====== STOPWATCH: " + msg + WaapiCommandFunction.stopwatch.ElapsedMilliseconds + " msec");
-        }
-        [Conditional("DEBUG")]
-        public static void DEBUG_LAPTIME(string msg = null)
-        {
-            if (msg != null)
-                msg = msg + ": ";
-            System.Diagnostics.Debug.WriteLine("====== STOPWATCH: " + msg + WaapiCommandFunction.stopwatch.ElapsedMilliseconds + " msec");
-        }
-        [Conditional("DEBUG")]
-        public static void DEBUG_STOPTIME(string msg = null)
-        {
-            if (msg != null)
-                msg = msg + ": ";
-            WaapiCommandFunction.stopwatch.Stop();
-            System.Diagnostics.Debug.WriteLine("====== STOPWATCH: " + msg + WaapiCommandFunction.stopwatch.ElapsedMilliseconds + " msec");
-        }
-
-
         /// <summary>
         /// Check whether Wwise already connect to any host.
         /// </summary>
@@ -54,17 +20,12 @@ namespace AK.Wwise.Waapi
         /// <returns>true: already connected to, false: not connected to</returns>
         private static async Task<bool> HasRemoteConnected(dotNetJsonClient client)
         {
-            System.Diagnostics.Debug.WriteLine("--- HasRemoteConnected() ---");
-
             var ConnectionStatus = await client.Call(ak.wwise.core.remote.getConnectionStatus).ConfigureAwait(false);
             System.Diagnostics.Debug.WriteLine("ConnectionStatus:\n" + ConnectionStatus);
 
             if (ConnectionStatus.Value<bool>("isConnected") == true)
-            {
                 return true;
-            }
             return false;
-
         }
 
         /// <summary>
@@ -76,13 +37,12 @@ namespace AK.Wwise.Waapi
         /// <returns>Error: -1, Success: Other int</returns>
         public static async Task<int> ConnectToHost(dotNetJsonClient client, bool ExcludeEditor = false, string IpAddress = null)
         {
-            System.Diagnostics.Debug.WriteLine("*** ConnectToHost() ***");
-
             // Check has already connected to some application
             if (await HasRemoteConnected(client).ConfigureAwait(false))
                 return -1;
 
             var AvailableConsoles = await client.Call(ak.wwise.core.remote.getAvailableConsoles).ConfigureAwait(false);
+            System.Diagnostics.Debug.WriteLine("\nAvailableConsoles:\n" + AvailableConsoles);
 
             if (AvailableConsoles == null)
             {
@@ -91,33 +51,29 @@ namespace AK.Wwise.Waapi
                 return -1;
             }
 
-            System.Diagnostics.Debug.WriteLine("\nAvailableConsoles:\n" + AvailableConsoles);
-
-            JObject ArgConnect;
+            JObject Arguments;
             if (ExcludeEditor)
             {
-                ArgConnect = (from acs in AvailableConsoles["consoles"]
-                              where acs["host"].ToString() == (IpAddress ?? "127.0.0.1")
-                              where !(acs["appName"].Contains("Editor"))
-                              select new JObject { { "host", acs["host"] }, { "commandPort ", acs["commandPort "] } }).FirstOrDefault();
+                Arguments = (from acs in AvailableConsoles["consoles"]
+                             where acs["host"].ToString() == (IpAddress ?? "127.0.0.1")
+                             where !(acs["appName"].Contains("Editor"))
+                             select new JObject { { "host", acs["host"] }, { "commandPort ", acs["commandPort "] } }).FirstOrDefault();
             }
             else
             {
-                ArgConnect = (from acs in AvailableConsoles["consoles"]
-                              where acs["host"].ToString() == (IpAddress ?? "127.0.0.1")
-                              select new JObject { { "host", acs["host"] }, { "commandPort", acs["commandPort"] } }).FirstOrDefault();
+                Arguments = (from acs in AvailableConsoles["consoles"]
+                             where acs["host"].ToString() == (IpAddress ?? "127.0.0.1")
+                             select new JObject { { "host", acs["host"] }, { "commandPort", acs["commandPort"] } }).FirstOrDefault();
             }
+            System.Diagnostics.Debug.WriteLine("\nArgConnect:\n" + Arguments);
 
-            System.Diagnostics.Debug.WriteLine("\nArgConnect:\n" + ArgConnect);
-
-            if (ArgConnect == null)
+            if (Arguments == null)
             {
                 System.Console.WriteLine("ERROR: Not found Console on Localhost!");
                 return -1;
             }
 
-            await client.Call(ak.wwise.core.remote.connect, ArgConnect).ConfigureAwait(false);
-
+            await client.Call(ak.wwise.core.remote.connect, Arguments).ConfigureAwait(false);
             return 0;
         }
 
@@ -130,8 +86,6 @@ namespace AK.Wwise.Waapi
         /// <returns>Error: -1, Success: Other int</returns>
         public static async Task<int> DisconnectFromHost(dotNetJsonClient client)
         {
-            System.Diagnostics.Debug.WriteLine("*** DisconnectFromHost() ***");
-
             if (!(await HasRemoteConnected(client).ConfigureAwait(false)))
             {
                 System.Console.WriteLine("No Connection Found.\n");
@@ -139,7 +93,6 @@ namespace AK.Wwise.Waapi
             }
 
             await client.Call(ak.wwise.core.remote.disconnect).ConfigureAwait(false);
-
             return 0;
         }
 
@@ -151,28 +104,20 @@ namespace AK.Wwise.Waapi
         /// <returns>Wwise information as string.</returns>
         private static async Task<string> GetWwiseInfo(dotNetJsonClient client, string ArgSwitch)
         {
-            System.Diagnostics.Debug.WriteLine("--- GetWwiseInfo() ---");
-
             switch (ArgSwitch)
             {
                 case ("-pn"):
                 case ("--projname"):
-                    System.Diagnostics.Debug.WriteLine("- Get Project Name -");
+                    JObject Arguments = JObject.Parse(@"{ from : { ofType : [ 'Project' ] } }");
+                    System.Diagnostics.Debug.WriteLine("\nArguments:\n" + Arguments);
 
-                    //JObject ArgGetProjName = JObject.Parse(@"{ from : { ofType : [ 'Project' ] } }");
-                    JObject ArgGetProjName = new JObject{
-                                                        {"from",new JObject{
-                                                                {"ofType",new JArray{
-                                                                                    "Project"}}}}};
-                    System.Diagnostics.Debug.WriteLine("\nArgGetProjName:\n" + ArgGetProjName);
+                    //JObject Options = JObject.Parse(@"{ return : [ 'name' ] }");
+                    JObject Options = new JObject { { "return", new JArray { "name" } } };
+                    System.Diagnostics.Debug.WriteLine("\nOptions:\n" + Options);
 
-                    //JObject OptGetProjName = JObject.Parse(@"{ return : [ 'name' ] }");
-                    JObject OptGetProjName = new JObject { { "return", new JArray { "name" } } };
-                    System.Diagnostics.Debug.WriteLine("\nOptGetProjName:\n" + OptGetProjName);
-
-                    var ProjInfo = await client.Call(ak.wwise.core.@object.get, ArgGetProjName, OptGetProjName).ConfigureAwait(false);
-
+                    var ProjInfo = await client.Call(ak.wwise.core.@object.get, Arguments, Options).ConfigureAwait(false);
                     System.Diagnostics.Debug.WriteLine("\nProjectName:\n" + (string)ProjInfo["return"][0]["name"]);
+
                     return (string)ProjInfo["return"][0]["name"];
 
                 default:
@@ -186,29 +131,26 @@ namespace AK.Wwise.Waapi
         /// <param name="ExecAppPath">Application path to execute.</param>
         /// <param name="ArgSwitch">Information type which you need.</param>
         /// <returns>Error: -1, Success: Other int</returns>
-        public static async Task<int> ExecuteExternalApplication(dotNetJsonClient client, string ExecAppPath = null, string ArgSwitch = null)
+        public static async Task<int> ExecuteExternalApplication(dotNetJsonClient client, string FileName = null, string ArgSwitch = null)
         {
-            System.Diagnostics.Debug.WriteLine("*** ExecuteExternalApplication() ***");
-
-            if (ExecAppPath == null)
+            if (FileName == null)
             {
                 System.Console.WriteLine("ERROR: Not found application to execute!");
                 return -1;
             }
-
             if (ArgSwitch == null)
             {
                 System.Console.WriteLine("ERROR: Invalid <Wwise Info> argument switch.");
                 return -1;
             }
 
-            ArgSwitch = await GetWwiseInfo(client, ArgSwitch).ConfigureAwait(false);
+            var Arguments = await GetWwiseInfo(client, ArgSwitch).ConfigureAwait(false);
 
             var ExecuteCommand = new ProcessStartInfo
             {
                 UseShellExecute = true,
-                FileName = ExecAppPath,
-                Arguments = ArgSwitch
+                FileName = FileName,
+                Arguments = Arguments
             };
 
             Process.Start(ExecuteCommand);
@@ -222,40 +164,63 @@ namespace AK.Wwise.Waapi
         /// <returns>All modified propertiws of selected object as JSON string.</returns>
         private static async Task<string> GetSelectedObjectInfo(dotNetJsonClient client)
         {
-            System.Diagnostics.Debug.WriteLine("*** GetSelectedObjectInfo() ***");
-            // Get Selected Object Info
-            var OptSelectedObjInfo = JObject.Parse("{ \"return\": [ \"" +
-                                            (String.Join("\", \"", typeof(WwiseObjectsReference).GetProperties().Select(f => f.Name).ToArray())).Replace("\"_", "\"@") +
-                                                        "\" ] }");
-            System.Diagnostics.Debug.WriteLine("\nOptSelectedObjInfo:\n" + OptSelectedObjInfo);
+            // String for option from WwiseObjectsReference class variables.
+            var WwiseObjectsReferenceList = typeof(WwiseObjectsReference).GetProperties().Select(f => f.Name).ToList();
+            // Make list to match format of options for cliant.Call
+            var ReturnedInfoList = new List<string>();
+            // Change characters to fit Wwise call options.
+            foreach (var itr in WwiseObjectsReferenceList)
+            {
+                if (itr.Contains("randomizer"))
+                    ReturnedInfoList.Add(Regex.Replace(itr.Replace("_", "@"), @"(randomizer)(.+)(@.+)", "$1(\\\"$2\\\").$3"));
+                else
+                    ReturnedInfoList.Add(itr.Replace("_", "@"));
+            }
 
-            DEBUG_LAPTIME("End OptSelectedObjInfo");
+            var Options = JObject.Parse("{ \"return\": [ \"" + String.Join("\", \"", ReturnedInfoList) + "\" ] }");
+            System.Diagnostics.Debug.WriteLine("\nOptions_getSelectedObjects:\n" + Options);
 
             var SelectedObjInfo = (JObject)(await client.Call(ak.wwise.ui.getSelectedObjects,
                                                               null,
-                                                              OptSelectedObjInfo).ConfigureAwait(false))["objects"][0];
+                                                              Options).ConfigureAwait(false))["objects"][0];
             System.Diagnostics.Debug.WriteLine("\nSelectedObjInfo:\n" + SelectedObjInfo);
 
-            DEBUG_LAPTIME("End SelectedObjInfo");
-
+            // Extract nested properties.
             var NestedProperties = new[] { "parent", "@OutputBus", "@UserAuxSend0", "@UserAuxSend1", "@UserAuxSend2", "@UserAuxSend3", "@ReflectionsAuxSend",
                                            "@Conversion", "@Effect0", "@Effect1", "@Effect2", "@Effect3", "@Attenuation", "@AttachableMixerInput",
                                            /* "@DefaultSwitchOrState", "@SwitchGroupOrStateGroup" */};
 
-            foreach (var NestedProperty in NestedProperties)
+            foreach (var itr in NestedProperties)
             {
-                SelectedObjInfo[NestedProperty] = SelectedObjInfo[NestedProperty]["id"];
+                SelectedObjInfo[itr] = SelectedObjInfo[itr]["id"];
             }
-
-            DEBUG_LAPTIME("End NestedProperties");
 
             // Remove '@' and ignore DefaultValue items.
             // Then, add '@' again to use argments of object creation.
-            return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(SelectedObjInfo.ToString().Replace("\"@", "\"_")),
-                                                                          Formatting.Indented,
-                                                                          new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }).Replace("\"_", "\"@");
+            var ReturnString = SelectedObjInfo?.ToString();
+            // Format to WwiseObjectsReference schema.
+            ReturnString = Regex.Replace(ReturnString, @"(randomizer)(\(\\"")(.+?)(\\""\)\.)@(Enable|Max|Min)", "$1$3_$5").Replace("@", "_");
+            // Remove default value property.
+            ReturnString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(ReturnString),
+                                                                    Formatting.Indented,
+                                                                    new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
+            // Re-format to WAAPI options schema.
+            ReturnString = Regex.Replace(ReturnString, @"(randomizer)(.+?)_(Enable|Max|Min)", "$1(\\\"$2\\\")._$3").Replace("_", "@");
+            System.Diagnostics.Debug.WriteLine("\nReturnString:\n" + ReturnString);
+
+            return ReturnString;
+
+            //return JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(SelectedObjInfo.ToString().Replace("\"@", "\"_")),
+            //                                                              Formatting.Indented,
+            //                                                              new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }).Replace("\"_", "\"@");
         }
 
+        /// <summary>
+        /// Get children object.
+        /// </summary>
+        /// <param name="client">AK.Wwise.Waapi.dotNetJsonClient instance.</param>
+        /// <param name="path">Parent object path.</param>
+        /// <returns></returns>
         private static async Task<string> GetChildrenObject(dotNetJsonClient client, string path)
         {
             var GetChildrenInfo = await client.Call(ak.wwise.core.@object.get, path, null).ConfigureAwait(false);
@@ -270,75 +235,99 @@ namespace AK.Wwise.Waapi
         /// <returns>Error: -1, Success: Other int</returns>
         public static async Task<int> ConvertContainerType(dotNetJsonClient client, string ConvertTo = null)
         {
-            DEBUG_STARTTIME("Start ConvertContainerType()");
-            System.Diagnostics.Debug.WriteLine("*** ConvertContainerType() ***");
-
             // Get Selected Object Info
             var SelectedObjInfo = JObject.Parse(await GetSelectedObjectInfo(client).ConfigureAwait(false));
-            DEBUG_LAPTIME("Start DeepCopy() SelectedObjInfo->ArgConvertTo");
-            JObject ArgConvertTo = (JObject)SelectedObjInfo.DeepClone();
-            DEBUG_LAPTIME("End DeepCopy() SelectedObjInfo->ArgConvertTo");
-            System.Diagnostics.Debug.WriteLine("*** " + (SelectedObjInfo == ArgConvertTo));
-
-            DEBUG_LAPTIME("End GetSelectedObjectInfo()");
+            // Copy object to modify safely.
+            JObject ArgumentsCreate = (JObject)SelectedObjInfo.DeepClone();
 
             // Modify info to use args for object creation
-            ArgConvertTo.Remove("id");
-            ArgConvertTo.Remove("childrenCount");
-            ArgConvertTo.Add("onNameConflict", "rename");
+            var RandomizerAccessors = new[] { "randomizer(\"Volume\").@Enabled","randomizer(\"Volume\").@Max","randomizer(\"Volume\").@Min",
+                                               "randomizer(\"Lowpass\").@Enabled","randomizer(\"Lowpass\").@Max","randomizer(\"Lowpass\").@Min",
+                                               "randomizer(\"Highpass\").@Enabled","randomizer(\"Highpass\").@Max","randomizer(\"Highpass\").@Min",
+                                               "randomizer(\"Pitch\").@Enabled","randomizer(\"Pitch\").@Max","randomizer(\"Pitch\").@Min",
+                                               "randomizer(\"InitialDelay\").@Enabled","randomizer(\"InitialDelay\").@Max","randomizer(\"InitialDelay\").@Min",};
+            JObject SourceRandomizedProps = new JObject();
+            foreach (var itr in RandomizerAccessors)
+            {
+                if (ArgumentsCreate.ContainsKey(itr))
+                {
+                    SourceRandomizedProps.Add(itr, ArgumentsCreate[itr]);
+                    ArgumentsCreate.Remove(itr);
+                }
+            }
+            ArgumentsCreate.Remove("id");
+            ArgumentsCreate.Remove("childrenCount");
+            ArgumentsCreate.Add("onNameConflict", "rename");
 
             switch (ConvertTo)
             {
                 case ("ActorMixer"):
                 case ("BlendContainer"):
                 case ("SwitchContainer"):
-                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == ConvertTo)
+                    if ((ArgumentsCreate["type"]?.ToString() ?? "None") == ConvertTo)
                     {
                         System.Diagnostics.Debug.WriteLine("Convert is stopped. Selected Container type is same as ConvertTo.");
                         return 0;
                     }
-                    ArgConvertTo["@RandomOrSequence"]?.Parent.Remove();
-                    ArgConvertTo["type"] = ConvertTo;
+                    ArgumentsCreate["@RandomOrSequence"]?.Parent.Remove();
+                    ArgumentsCreate["type"] = ConvertTo;
                     break;
 
                 case ("RandomContainer"):
                 case ("SequenceContainer"):
-                    if ((ArgConvertTo["type"]?.ToString() ?? "None") == "RandomSequenceContainer")
-                        if (((ConvertTo == "SequenceContainer") && (ArgConvertTo["@RandomOrSequence"]?.ToString() == "0")) ||
-                            ((ConvertTo == "RandomContainer") && (ArgConvertTo["@RandomOrSequence"]?.ToString() == "1")))
-                        {
-                            System.Diagnostics.Debug.WriteLine("Convert is stopped. Selected Container type is same as ConvertTo.");
-                            return 0;
-                        }
+                    if ((ArgumentsCreate["type"]?.ToString() == "RandomSequenceContainer") &&
+                        (((ConvertTo == "SequenceContainer") && (ArgumentsCreate["@RandomOrSequence"]?.ToString() == "0")) ||
+                         ((ConvertTo == "RandomContainer") && (ArgumentsCreate["@RandomOrSequence"]?.ToString() == "1"))))
+                    {
+                        System.Diagnostics.Debug.WriteLine("Convert is stopped. Selected Container type is same as ConvertTo.");
+                        return 0;
+                    }
 
-                    if (ArgConvertTo["@RandomOrSequence"] == null)
-                    {
-                        if (ConvertTo == "SequenceContainer")
-                            ArgConvertTo.Add("@RandomOrSequence", 0);
-                        else
-                            ArgConvertTo.Add("@RandomOrSequence", 1);
-                    }
+                    if (ArgumentsCreate["@RandomOrSequence"] == null)
+                        ArgumentsCreate.Add("@RandomOrSequence", (ConvertTo == "SequenceContainer") ? 0 : 1);
                     else
-                    {
-                        if (ConvertTo == "SequenceContainer")
-                            ArgConvertTo["@RandomOrSequence"] = 0;
-                        else
-                            ArgConvertTo["@RandomOrSequence"] = 1;
-                    }
-                    ArgConvertTo["type"] = "RandomSequenceContainer";
+                        ArgumentsCreate["@RandomOrSequence"] = (ConvertTo == "SequenceContainer") ? 0 : 1;
+
+                    ArgumentsCreate["type"] = "RandomSequenceContainer";
                     break;
 
                 default:
                     System.Diagnostics.Debug.WriteLine("No Argment of Containert Type for Convert to.");
                     return 0;
             }
-            System.Diagnostics.Debug.WriteLine("\nArgConvertTo:\n" + ArgConvertTo);
+            System.Diagnostics.Debug.WriteLine("\nArgments_create:\n" + ArgumentsCreate);
 
-            DEBUG_LAPTIME("Start ak.wwise.core.@object.create");
+            var CreatedContainer = await client.Call(ak.wwise.core.@object.create, ArgumentsCreate, null).ConfigureAwait(false);
+            System.Diagnostics.Debug.WriteLine("\nCreatedContainer:\n" + CreatedContainer);
 
-            var CreatedContainer = await client.Call(ak.wwise.core.@object.create, ArgConvertTo, null).ConfigureAwait(false);
+            // Make arguments for randomize
+            JObject ArgumentsRandomize = new JObject();
+            if (SourceRandomizedProps != null)
+            {
+                ArgumentsRandomize.Add("object", CreatedContainer["id"]);
+                ArgumentsRandomize.Add("property", null);
+                ArgumentsRandomize.Add("enabled", null);
+                ArgumentsRandomize.Add("min", null);
+                ArgumentsRandomize.Add("max", null);
 
-            DEBUG_LAPTIME("End ak.wwise.core.@object.create");
+                var RandomizedProps = new[] { "Volume", "Lowpass", "Highpass", "Pitch", "InitialDelay" };
+                foreach (var itr in RandomizedProps)
+                {
+
+                    if (SourceRandomizedProps.ContainsKey("randomizer(\"" + itr + "\").@Enabled") ||
+                        SourceRandomizedProps.ContainsKey("randomizer(\"" + itr + "\").@Max") ||
+                        SourceRandomizedProps.ContainsKey("randomizer(\"" + itr + "\").@Min"))
+                    {
+                        ArgumentsRandomize["property"] = itr;
+                        ArgumentsRandomize["enabled"] = SourceRandomizedProps["randomizer(\"" + itr + "\").@Enabled"] ?? false;
+                        ArgumentsRandomize["min"] = SourceRandomizedProps["randomizer(\"" + itr + "\").@Min"] ?? 0;
+                        ArgumentsRandomize["max"] = SourceRandomizedProps["randomizer(\"" + itr + "\").@Max"] ?? 0;
+                        System.Diagnostics.Debug.WriteLine("\nArgumentsRandomize(\"" + itr + "\"):\n" + ArgumentsRandomize);
+                        await client.Call(ak.wwise.core.@object.setRandomizer, ArgumentsRandomize, null).ConfigureAwait(false);
+                    }
+                }
+
+            }
 
             // Move children to new created container
             if (SelectedObjInfo["childrenCount"]?.ToString() == "0")
@@ -357,7 +346,7 @@ namespace AK.Wwise.Waapi
                 {"transform",new JArray{
                     new JObject{
                         {"select", new JArray{
-                            "children"
+                            "children",
                         }}}}}
             };
             JObject OptGetChildrenInfo = new JObject{
@@ -382,11 +371,6 @@ namespace AK.Wwise.Waapi
                 System.Diagnostics.Debug.WriteLine("\nArgMoveTo:\n" + ArgMoveTo);
                 await client.Call(ak.wwise.core.@object.move, ArgMoveTo, null).ConfigureAwait(false);
             }
-
-            /*
-
-            DEBUG_STOPTIME("End ConvertContainerType()");
-            */
 
             return 0;
         }

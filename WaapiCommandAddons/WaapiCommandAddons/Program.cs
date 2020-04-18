@@ -43,16 +43,12 @@ Command:
             {
                 try
                 {
-                    WaapiCommandFunction.DEBUG_STARTTIME();
-
                     AK.Wwise.Waapi.dotNetJsonClient client = new AK.Wwise.Waapi.dotNetJsonClient();
 
                     // Try to connect to running instance of Wwise on localhost, default port
                     await client.Connect().ConfigureAwait(false);
                     // Register for connection lost event
                     client.Disconnected += () => System.Console.WriteLine("We lost connection!");
-
-                    WaapiCommandFunction.DEBUG_STOPTIME();
 
                     if (args[0] == "-r" || args[0] == "--remote")
                     {
@@ -62,15 +58,11 @@ Command:
                             await WaapiCommandFunction.ConnectToHost(client).ConfigureAwait(false);
                     }
                     else if (args[0] == "-c" || args[0] == "--convert")
-                    {
                         await WaapiCommandFunction.ConvertContainerType(client, args[1]).ConfigureAwait(false);
-                    }
                     else if (args[0] == "-x" || args[0] == "--execute")
                     {
                         if (args[1].StartsWith("-"))
-                        {
                             await WaapiCommandFunction.ExecuteExternalApplication(client, String.Join(" ", args[2..]), args[1]).ConfigureAwait(false);
-                        }
                         else
                         {
                             System.Console.WriteLine("ERROR: Invalid <Wwise Info> switch.");
