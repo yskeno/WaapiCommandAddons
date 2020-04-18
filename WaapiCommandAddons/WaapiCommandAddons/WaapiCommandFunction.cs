@@ -166,6 +166,7 @@ namespace AK.Wwise.Waapi
         {
             // String for option from WwiseObjectsReference class variables.
             var WwiseObjectsReferenceList = typeof(WwiseObjectsReference).GetProperties().Select(f => f.Name).ToList();
+            var WwiseObjectsReferenceStr = typeof(WwiseObjectsReference).GetProperties().Select(f => f.Name).ToString();
             // Make list to match format of options for cliant.Call
             var ReturnedInfoList = new List<string>();
             // Change characters to fit Wwise call options.
@@ -197,13 +198,12 @@ namespace AK.Wwise.Waapi
 
             // Remove '@' and ignore DefaultValue items.
             // Then, add '@' again to use argments of object creation.
-            var ReturnString = SelectedObjInfo?.ToString();
             // Format to WwiseObjectsReference schema.
-            ReturnString = Regex.Replace(ReturnString, @"(randomizer)(\(\\"")(.+?)(\\""\)\.)@(Enable|Max|Min)", "$1$3_$5").Replace("@", "_");
+            var ReturnString = Regex.Replace(SelectedObjInfo?.ToString(), @"(randomizer)(\(\\"")(.+?)(\\""\)\.)@(Enable|Max|Min)", "$1$3_$5").Replace("@", "_");
             // Remove default value property.
             ReturnString = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<WwiseObjectsReference>(ReturnString),
-                                                                    Formatting.Indented,
-                                                                    new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
+                                                       Formatting.Indented,
+                                                       new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
             // Re-format to WAAPI options schema.
             ReturnString = Regex.Replace(ReturnString, @"(randomizer)(.+?)_(Enable|Max|Min)", "$1(\\\"$2\\\")._$3").Replace("_", "@");
             System.Diagnostics.Debug.WriteLine("\nReturnString:\n" + ReturnString);
@@ -237,22 +237,25 @@ namespace AK.Wwise.Waapi
         {
             // Get Selected Object Info
             var SelectedObjInfo = JObject.Parse(await GetSelectedObjectInfo(client).ConfigureAwait(false));
+
             // Copy object to modify safely.
             JObject ArgumentsCreate = (JObject)SelectedObjInfo.DeepClone();
 
             // Modify info to use args for object creation
-            var RandomizerAccessors = new[] { "randomizer(\"Volume\").@Enabled","randomizer(\"Volume\").@Max","randomizer(\"Volume\").@Min",
-                                               "randomizer(\"Lowpass\").@Enabled","randomizer(\"Lowpass\").@Max","randomizer(\"Lowpass\").@Min",
-                                               "randomizer(\"Highpass\").@Enabled","randomizer(\"Highpass\").@Max","randomizer(\"Highpass\").@Min",
-                                               "randomizer(\"Pitch\").@Enabled","randomizer(\"Pitch\").@Max","randomizer(\"Pitch\").@Min",
-                                               "randomizer(\"InitialDelay\").@Enabled","randomizer(\"InitialDelay\").@Max","randomizer(\"InitialDelay\").@Min",};
+            var RandomizedProperties = new[] { "Volume", "Lowpass", "Highpass", "Pitch", "InitialDelay" };
+            var RandomizerValues = new[] { "Enabled", "Max", "Min" };
+
             JObject SourceRandomizedProps = new JObject();
-            foreach (var itr in RandomizerAccessors)
+            foreach (var itrPrp in RandomizedProperties)
             {
-                if (ArgumentsCreate.ContainsKey(itr))
+                foreach (var itrVal in RandomizerValues)
                 {
-                    SourceRandomizedProps.Add(itr, ArgumentsCreate[itr]);
-                    ArgumentsCreate.Remove(itr);
+                    var RandomizerKey = "randomizer(\"" + itrPrp + "\").@" + itrVal;
+                    if (ArgumentsCreate.ContainsKey(RandomizerKey))
+                    {
+                        SourceRandomizedProps.Add(RandomizerKey, ArgumentsCreate[RandomizerKey]);
+                        ArgumentsCreate.Remove(RandomizerKey);
+                    }
                 }
             }
             ArgumentsCreate.Remove("id");
