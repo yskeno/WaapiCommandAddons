@@ -2,7 +2,7 @@
   "profiles": {
     "WaapiCommandAddons": {
       "commandName": "Project",
-      "commandLineArgs": "-c RandomContainer"
+      "commandLineArgs": "-c ActorMixer"
     }
   }
 }
