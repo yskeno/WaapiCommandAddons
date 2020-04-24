@@ -1,5 +1,8 @@
 # WaapiCommandAddons
 Wwise Command Addons using WAAPI
 
-Using .Net Core 3.1
-Require Newtonsoft JSON.net
+## Building
+This project requires
+* .NetCore3.1  
+* Newtonsoft JSON.net(from NuGet package manager)
+* Audiokinetic Wwise(to use WaapiClientCore module)
